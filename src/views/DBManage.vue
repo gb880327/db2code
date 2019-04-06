@@ -25,10 +25,11 @@
   </div>
 </template>
 <script>
+import config from "@/libs/config";
+
 export default {
   data() {
     return {
-      attrName: "DBList",
       split: 0.2,
       height: 0,
       select: [],
@@ -48,7 +49,7 @@ export default {
   },
   methods: {
     init() {
-      let data = localStorage.getItem(this.attrName);
+      let data = localStorage.getItem(config.dbList);
       alert(data);
       this.dbList = (data === "" || data == null || data == undefined) ? [{
           id: 0,
@@ -82,7 +83,7 @@ export default {
         name: "mysql " + id,
         props: {}
       });
-      localStorage.setItem(this.attrName, JSON.stringify(this.dbList));
+      localStorage.setItem(config.dbList, JSON.stringify(this.dbList));
     },
     delItem() {
       if (this.select.length == 0) {
@@ -93,7 +94,7 @@ export default {
         this.select.forEach(item => {
           this.dbList.splice(this.dbList.findIndex(it => it.id == item), 1);
         });
-        localStorage.setItem(this.attrName, JSON.stringify(this.dbList));
+        localStorage.setItem(config.dbList, JSON.stringify(this.dbList));
       }
     }
   }
