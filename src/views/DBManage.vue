@@ -3,14 +3,7 @@
     <Split v-model="split" :style="{height: getHeight+'px'}">
       <div slot="left" class="split-left">
         <div class="left-opt">
-          <Row>
-            <Col span="12" style="border-right: 1px solid #dcdee2;">
-              <Button type="text" style="width:100%;" @click="delItem">删除</Button>
-            </Col>
-            <Col span="12" style="border-left: 1px solid #dcdee2;">
-              <Button type="text" style="width:100%;" @click="addItem">新增</Button>
-            </Col>
-          </Row>
+          <Button type="text" style="width:100%;" @click="addItem">新增</Button>
         </div>
         <div class="left-list" :style="{height: (getHeight - 38)+'px'}">
           <ul class="itemList">
@@ -20,20 +13,48 @@
           </ul>
         </div>
       </div>
-      <div slot="right" class="pane split-right" :style="{height:getHeight+'px'}">Right Pane</div>
+      <div slot="right" class="pane split-right" :style="{height:getHeight+'px'}">
+        <div class="row">
+          <span class="labelName">名称：</span>
+          <Input v-model="data.name" placeholder="请输入自定义名称..." style="width: 198px"/>
+        </div>
+        <div class="row">
+          <span class="labelName">数据库类型：</span>
+          <Select v-model="data.type" style="width:200px">
+            <Option v-for="item in dbTypeList" :value="item" :key="item">{{ item }}</Option>
+          </Select>
+        </div>
+        <mysql ref="mysql" v-if="data.type === 'mysql'"></mysql>
+        <div class="row">
+          <br>
+          <span class="labelName"></span>
+          <Button type="primary" class="btn" @click="saveItem">保存</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button type="error" @click="delItem" class="btn" v-if="currentId > 0">删除</Button>
+        </div>
+      </div>
     </Split>
   </div>
 </template>
 <script>
 import config from "@/libs/config";
+import mysql from "@/views/dbType/mysql";
 
 export default {
+  components: {
+    mysql
+  },
   data() {
     return {
       split: 0.2,
       height: 0,
       select: [],
-      dbList: []
+      dbTypeList: config.dbType,
+      dbList: [],
+      data: {
+        name: "",
+        type: "mysql"
+      },
+      currentId: 0
     };
   },
   mounted() {
@@ -49,99 +70,70 @@ export default {
   },
   methods: {
     init() {
-      let data = localStorage.getItem(config.dbList);
-      alert(data);
-      this.dbList = (data === "" || data == null || data == undefined) ? [{
-          id: 0,
-          name: "mysql",
-          props: {}
-        }] : JSON.parse(data);
+      let data = this.$getDataForObj(config.dbList);
+      this.dbList = data === "" ? [] : data;
+      this.$saveData(config.dbList, this.dbList);
     },
     itemClick(item) {
       let list = document
         .getElementsByClassName("itemList")[0]
         .getElementsByTagName("li");
-      let index = this.select.findIndex(it => it == item.id);
       for (let it of list) {
-        if (parseInt(it.getAttribute("id")) == item.id) {
-          it.className = index >= 0 ? "" : "selected";
-        } else {
-          it.className =
-            this.select.findIndex(sub => sub == it.id) >= 0 ? "selected" : "";
-        }
+        it.className =
+          parseInt(it.getAttribute("id")) == item.id ? "selected" : "";
       }
-      if (index >= 0) {
-        this.select.splice(index, 1);
-      } else {
-        this.select.push(item.id);
-      }
+      this.currentId = item.id;
+      this.data.name = item.name;
+      this.data.type = item.type;
+      this.$nextTick(() => {
+        this.$refs[item.type].setData(item.props);
+      });
     },
     addItem() {
-      let id = new Date().getTime();
-      this.dbList.push({
-        id: id,
-        name: "mysql " + id,
-        props: {}
-      });
-      localStorage.setItem(config.dbList, JSON.stringify(this.dbList));
+      this.currentId = 0;
+      this.data.name = "";
+      this.data.type = "mysql";
+      this.$refs[this.data.type].clean();
+      let list = document
+        .getElementsByClassName("itemList")[0]
+        .getElementsByTagName("li");
+      for (let it of list) {
+        it.className = "";
+      }
+    },
+    saveItem() {
+      let props = this.$refs[this.data.type].getData();
+      if (props) {
+        if (this.currentId > 0) {
+          let index = this.dbList.findIndex(item => item.id == this.currentId);
+          this.dbList[index].name = this.data.name;
+          this.dbList[index].type = this.data.type;
+          this.dbList[index].props = props;
+        } else {
+          let id = new Date().getTime();
+          this.dbList.push({
+            id: id,
+            name: this.data.name,
+            type: this.data.type,
+            props: props
+          });
+          this.addItem();
+        }
+        this.$success("保存成功！");
+        this.$saveData(config.dbList, this.dbList);
+      }
     },
     delItem() {
-      if (this.select.length == 0) {
-        this.$Notice.error({
-          title: "请请选择要删除的数据！"
+      let index = this.dbList.findIndex(it => it.id == this.currentId);
+      if (index >= 0) {
+        this.$confirm("确认删除该数据库配置？", () => {
+          this.dbList.splice(index, 1);
+          this.$saveData(config.dbList, this.dbList);
+          this.addItem();
+          this.$success("删除成功！");
         });
-      } else {
-        this.select.forEach(item => {
-          this.dbList.splice(this.dbList.findIndex(it => it.id == item), 1);
-        });
-        localStorage.setItem(config.dbList, JSON.stringify(this.dbList));
       }
     }
   }
 };
 </script>
-<style lang="css" scoped>
-.pane {
-  padding: 10px;
-}
-.split-left {
-  border-top: 1px solid #dcdee2;
-  border-left: 1px solid #dcdee2;
-  border-bottom: 1px solid #dcdee2;
-}
-.split-right {
-  border-top: 1px solid #dcdee2;
-  border-right: 1px solid #dcdee2;
-  border-bottom: 1px solid #dcdee2;
-}
-.left-list {
-  width: 100%;
-  overflow-y: scroll;
-}
-.left-opt {
-  border-bottom: 1px solid #dcdee2;
-  width: 100%;
-  height: 35px;
-}
-.itemList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.itemList li {
-  padding: 5px 10px;
-  margin: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  background-color: #dcdee2;
-  border-radius: 5px;
-  color: black;
-}
-.itemList li:hover {
-  background-color: #b0b4bb;
-}
-.itemList .selected {
-  background-color: #515a6c;
-  color: #ffffff;
-}
-</style>

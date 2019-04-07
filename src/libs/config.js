@@ -1,3 +1,8 @@
-export default config = {
-    dbList: "DBList"
+let config = {
+    dbList: "DBList",
+    templatePath: "TemplatePath",
+    templateList: "TemplateList",
+    dbType: ["mysql"]
 };
+
+export default config;
