@@ -4,6 +4,7 @@ import Index from './views/Index.vue'
 import Main from './views/Main.vue'
 import DBManage from './views/DBManage.vue'
 import TemplateManage from './views/TemplateManage.vue'
+import ProjectManage from './views/ProjectManage'
 
 Vue.use(Router)
 
@@ -28,6 +29,10 @@ export default new Router({
             path: "/TemplateManage",
             name: "TemplateManage",
             component: TemplateManage
+        }, {
+            path: "/ProjectManage",
+            name: "ProjectManage",
+            component: ProjectManage
         }]
     }]
 })

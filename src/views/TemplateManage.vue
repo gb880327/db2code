@@ -1,5 +1,6 @@
 <template>
   <div :style="{height: getHeight+'px'}">
+    <div class="moduleTitle">模板管理</div>
     <Split v-model="split" :style="{height: getHeight+'px'}">
       <div slot="left" class="split-left">
         <div class="left-opt">
@@ -53,7 +54,7 @@ export default {
     this.templateList =
       list && list != null && list != "" ? JSON.parse(list) : [];
 
-    this.tempPath = this.$getDataForStr(config.templatePath);
+    this.tempPath = config.getTemplatePath();
     this.$nextTick(() => {
       this.height = this.$parent.$el.clientHeight;
       this.aceEditor = ace.edit(this.$refs.ace, {
@@ -68,7 +69,7 @@ export default {
   },
   computed: {
     getHeight() {
-      return this.height;
+      return this.height - 30;
     }
   },
   methods: {
@@ -147,8 +148,7 @@ export default {
         });
         if (text && text != "") {
           item.fileName = text;
-          item.filePath =
-            _this.$getDataForStr(config.templatePath) + "/" + text;
+          item.filePath = config.getTemplatePath() + "/" + text;
           item.name = _this.name;
           if (_this.currentId == 0) {
             item.id = new Date().getTime();
@@ -158,11 +158,7 @@ export default {
             _this.templateList[index] = item;
           }
 
-          if (
-            fs.existsSync(
-              _this.$getDataForStr(config.templatePath) + "/" + text
-            )
-          ) {
+          if (fs.existsSync(config.getTemplatePath() + "/" + text)) {
             _this.$confirm("文件 " + text + " 已存在，是否覆盖！", () => {
               _this.writeFile(item);
             });
@@ -175,11 +171,14 @@ export default {
     writeFile(item) {
       fs.writeFile(item.filePath, this.aceEditor.getValue(), err => {
         if (err) {
+          location.reload();
           this.$error(err);
+          console.log(err);
+        } else {
+          this.$saveData(config.templateList, this.templateList);
+          this.$success("保存成功！");
         }
       });
-      this.$saveData(config.templateList, this.templateList);
-      this.$success("保存成功！");
     },
     delItem() {
       let index = this.templateList.findIndex(it => it.id == this.currentId);

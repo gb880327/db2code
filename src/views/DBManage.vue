@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="moduleTitle">数据库管理</div>
     <Split v-model="split" :style="{height: getHeight+'px'}">
       <div slot="left" class="split-left">
         <div class="left-opt">
@@ -65,7 +66,7 @@ export default {
   },
   computed: {
     getHeight() {
-      return this.height;
+      return this.height - 30;
     }
   },
   methods: {

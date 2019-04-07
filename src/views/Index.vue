@@ -5,29 +5,31 @@
         <Button type="primary" shape="circle" icon="md-home" @click="gotoPath('/')"></Button>&nbsp;&nbsp;&nbsp;&nbsp;
         <Button
           type="primary"
+          icon="ios-briefcase"
+          @click="gotoPath('/ProjectManage')"
+        >项目管理</Button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button
+          type="primary"
           icon="ios-construct-outline"
           @click="gotoPath('/DBManage')"
-          :disabled="dbManage"
         >数据库配置</Button>&nbsp;&nbsp;&nbsp;&nbsp;
         <Button
           type="primary"
           icon="md-code-working"
           @click="gotoPath('/TemplateManage')"
-          :disabled="templateManage"
         >模板配置</Button>&nbsp;&nbsp;&nbsp;&nbsp;
       </Header>
       <Content :style="{margin: '75px 10px 0', background: '#fff', height: (height-116)+'px'}">
-        <router-view ref="view"></router-view>
+        <router-view ref="view" v-if="is_show"></router-view>
       </Content>
       <Footer class="layout-footer-center">2019 &copy; Rookie</Footer>
     </Layout>
-    <Modal v-model="setTempPath" title="设置模板保存路径！" :mask-closable="false">
-      <div style="padding:10px 30px 20px 30px;text-align:center;">
-        <Input v-model="tempPath" :readonly="true">
-          <Button type="primary" slot="append" @click="selectPath">选择</Button>
-        </Input>
+
+    <Modal v-model="setDataPath" title="设置系统配置保存路径！" :mask-closable="false">
+      <div style="padding: 10px; text-align:center;">
+        <pathChoose @change="changeHanlder" :showLabel="false"></pathChoose>
         <br>
-        <Button type="primary" :disabled="tempPath===''" @click="next">继续</Button>
+        <Button type="primary" @click="save">保存</Button>
       </div>
       <div slot="footer"></div>
     </Modal>
@@ -36,77 +38,74 @@
 
 <script>
 // @ is an alias to /src
+import pathChoose from "@/views/pathChoose";
 import config from "@/libs/config";
 const { dialog } = require("electron").remote;
 const fs = require("fs");
 
 export default {
+  components: {
+    pathChoose
+  },
   data() {
     return {
       height: document.documentElement.clientHeight,
-      setTempPath: false,
-      tempPath: ""
+      setDataPath: false,
+      dataPath: "",
+      is_show: false
     };
   },
   mounted() {
+    this.checkPath();
     window.addEventListener("resize", this.resizeHandler);
   },
   destroyed() {
     window.removeEventListener("resize", this.resizeHandler);
   },
-  computed: {
-    dbManage() {
-      return this.$route.path === "/DBManage";
-    },
-    templateManage() {
-      return this.$route.path === "/TemplateManage";
-    }
-  },
   methods: {
-    next() {
-      if (!fs.existsSync(this.tempPath)) {
-        this.$error("模板路径不存在！");
-        return;
-      }
-      if (!fs.existsSync(this.tempPath + "/template")) {
-        fs.mkdir(this.tempPath + "/template", err => {
-          if (err) {
-            this.$error(err);
-          } else {
-            this.$saveData(config.templatePath, this.tempPath + "/template");
-            this.setTempPath = false;
-            this.$router.push({ path: "/TemplateManage" });
-          }
-        });
-      } else {
-        this.$saveData(config.templatePath, this.tempPath + "/template");
-        this.setTempPath = false;
-        this.$router.push({ path: "/TemplateManage" });
-      }
-    },
-    selectPath() {
-      let path = dialog.showOpenDialog({ properties: ["openDirectory"] });
-      if (path && path.length > 0) {
-        this.tempPath = path[0];
-      }
-    },
     gotoPath(path) {
-      if (path === "/TemplateManage") {
-        let tempPath = localStorage.getItem(config.templatePath);
-        if (!tempPath || tempPath === "" || tempPath == null) {
-          this.setTempPath = true;
-        } else {
-          this.$router.push({ path: path });
-        }
-      } else {
-        this.$router.push({ path: path });
-      }
+      let tempPath = localStorage.getItem(config.templatePath);
+      this.$router.push({ path: path });
     },
     resizeHandler(event) {
       this.height = document.documentElement.clientHeight;
       this.$nextTick(() => {
         this.$refs.view.height = this.height - 116;
       });
+    },
+    changeHanlder(path) {
+      this.dataPath = path;
+    },
+    save() {
+      if (this.dataPath === "") {
+        this.$error("请选择系统配置保存路径！");
+        return;
+      }
+      this.$saveData(config.dataPath, this.dataPath);
+      this.setDataPath = false;
+      this.is_show = true;
+    },
+    checkPath() {
+      let dataPath = this.$getDataForStr(config.dataPath);
+      if (dataPath === "") {
+        this.setDataPath = true;
+        return;
+      }
+      this.is_show = true;
+      if (!fs.existsSync(dataPath + "/" + config.template)) {
+        fs.mkdir(dataPath + "/" + config.template, err => {
+          if (err) {
+            this.$error(err);
+          }
+        });
+      }
+      if (!fs.existsSync(dataPath + "/" + config.project)) {
+        fs.mkdir(dataPath + "/" + config.project, err => {
+          if (err) {
+            this.$error(err);
+          }
+        });
+      }
     }
   }
 };
@@ -179,11 +178,17 @@ export default {
 }
 .labelName {
   display: inline-block;
-  width: 100px;
+  min-width: 100px;
   text-align: right;
 }
 .btn {
   margin: 0 5px;
+}
+.moduleTitle{
+  padding: 4px 10px;
+  font-size:14px;
+  font-weight: bold;
+  background-color: #b0b4bb69;
 }
 </style>
 
