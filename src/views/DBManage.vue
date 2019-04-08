@@ -66,7 +66,7 @@ export default {
   },
   computed: {
     getHeight() {
-      return this.height - 30;
+      return this.height - 32;
     }
   },
   methods: {

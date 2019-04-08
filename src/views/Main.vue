@@ -21,7 +21,7 @@
   </div>
 </template>
 <script>
-import pathChoose from "@/views/pathChoose";
+import pathChoose from "@/views/PathChoose";
 import config from "@/libs/config";
 const { dialog } = require("electron").remote;
 

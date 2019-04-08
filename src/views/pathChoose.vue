@@ -1,9 +1,8 @@
 <template>
   <div>
-    <span class="labelName" v-if="showLabel">系统配置保存路径：</span>
-    <Input v-model="dataPath" :readonly="true">
-      <Button type="primary" slot="append" @click="selectPath">选择</Button>
-    </Input>
+    <span v-if="showLabel" style="line-height: 32px;">{{title}}：</span>
+    <Input v-model="dataPath" class="chooseInput"></Input>
+    <Button class="chooseBtn" type="text" @click="selectPath">选择...</Button>
   </div>
 </template>
 <script>
@@ -19,6 +18,10 @@ export default {
     showLabel:{
         type: Boolean,
         default: true
+    },
+    title: {
+      type: String,
+      default: "系统配置保存路径"
     }
   },
   data() {
@@ -47,3 +50,11 @@ export default {
   }
 };
 </script>
+<style scoped>
+.chooseInput{
+  width: 300px;
+}
+.chooseBtn:focus{
+  box-shadow: none;
+}
+</style>
