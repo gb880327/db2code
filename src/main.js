@@ -27,7 +27,8 @@ Vue.prototype.$saveData = saveData;
 Vue.prototype.$getDataForObj = getDataForObject;
 Vue.prototype.$getDataForStr = getDataForStr;
 
-new Vue({
+const vue = new Vue({
     router,
     render: h => h(App)
-}).$mount('#app')
+}).$mount('#app');
+export default vue;

@@ -1,15 +1,40 @@
 const mysql = require('mysql');
-const connection = mysql.createConnection({
-    host: '39.108.99.240',
-    user: 'dev',
-    port: 45036,
-    password: 'Dev@2019',
-    database: 'deepbrief'
-});
-connection.connect();
-export const query = () => {
-    connection.query('SELECT * from dictionary', function(error, results, fields) {
-        if (error) throw error;
-        console.log(results);
-    });
-};
+import $this from "@/main.js";
+import { async } from "q";
+
+/** 
+ * 数据库相关操作工具类
+ */
+class DataBaseUtil {
+
+    constructor(props = {}) {
+        this.conn = mysql.createConnection({
+            host: props.host,
+            port: props.port,
+            database: props.dbName,
+            user: props.userName,
+            password: props.passWord
+        });
+        this.conn.connect((err) => {
+            if (err) {
+                $this.$error(e);
+            }
+        });
+    }
+
+    listTable() {
+        return new Promise((resolve, reject) => {
+            this.conn.query("show tables;", (error, result, fields) => {
+                if (error) {
+                    $this.$error(error);
+                    reject("查询失败！");
+                } else {
+                    let ret = { result: result, fields: fields };
+                    resolve(ret);
+                }
+            })
+        });
+    }
+}
+
+export default DataBaseUtil;

@@ -14,7 +14,7 @@
           <Option v-for="item in projectList" :value="item.id" :key="item.id">{{ item.name }}</Option>
         </Select>
         &nbsp;&nbsp;
-        <Button type="primary" icon="md-arrow-dropright-circle" :disabled="projectId == 0">执行</Button>
+        <Button type="primary" icon="md-arrow-dropright-circle" :disabled="projectId == 0" @click="exec">执行</Button>
         <span class="tips" v-if="projectList.length == 0"><a href="javascript:void(0);" @click="gotoProject">添加项目</a></span>
       </div>
     </div>
@@ -50,6 +50,9 @@ export default {
     }
   },
   methods: {
+    exec(){
+      
+    },
     selectPath(path) {
       this.$saveData(config.dataPath, this.dataPath);
     },

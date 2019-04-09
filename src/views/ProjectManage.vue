@@ -24,24 +24,21 @@
           <Select v-model="current.dataBase" style="width:200px" @on-change="dbChange">
             <Option v-for="item in dbList" :value="item.id" :key="item.id">{{ item.name }}</Option>
           </Select>
-          <span class="tips" v-if="dbList.length == 0"><a href="javascript:void(0);" @click="$router.push({ path: '/DBManage' })">添加数据库配置</a></span>
+          <span class="tips" v-if="dbList.length == 0">
+            <a href="javascript:void(0);" @click="$router.push({ path: '/DBManage' })">添加数据库配置</a>
+          </span>
         </div>
         <div class="row" v-if="showTable">
-          <Row>
-            <Col span="8">
-              <Table
-                :columns="tableColumns"
-                :data="tableList"
-                height="300"
-                style="margin-left:100px;"
-                @on-select="selectHanlder"
-                @on-select-cancel="unselectHanlder"
-                @on-select-all="selectAllHanlder"
-                @on-select-all-cancel="unselectAllHanlder"
-              ></Table>
-            </Col>
-            <Col span="16"></Col>
-          </Row>
+          <Table
+            :columns="tableColumns"
+            :data="tableList"
+            height="300"
+            style="margin-left:100px;"
+            @on-select="selectHanlder"
+            @on-select-cancel="unselectHanlder"
+            @on-select-all="selectAllHanlder"
+            @on-select-all-cancel="unselectAllHanlder"
+          ></Table>
         </div>
         <div class="row" v-for="item,i in current.templateList" :key="i">
           <div class="col">
@@ -59,7 +56,9 @@
           <Button type="error" @click="delTemp(item.id)" v-if="current.templateList.length > 1">删除</Button>
         </div>
         <div class="row" style="padding-left:100px;">
-          <span class="tips" v-if="templateList.length == 0"><a href="javascript:void(0);" @click="$router.push({ path: '/TemplateManage' })">添加模板</a></span>
+          <span class="tips" v-if="templateList.length == 0">
+            <a href="javascript:void(0);" @click="$router.push({ path: '/TemplateManage' })">添加模板</a>
+          </span>
         </div>
         <Button class="add" @click="addTemp">添加</Button>
         <div class="row">
@@ -79,6 +78,8 @@
 <script>
 import config from "@/libs/config";
 import pathChoose from "@/views/PathChoose";
+import DataBaseUtil from "@/libs/database";
+import { constants } from "crypto";
 
 export default {
   components: {
@@ -152,10 +153,18 @@ export default {
       this.current.tables.push(row.tableName);
     },
     dbChange() {
-      if(this.current.dataBase > 0){
-        this.tableList = [{ tableName: "Demo1" }, { tableName: "Demo2" }];
-        this.tableList.forEach(item=>{
-          item['_checked'] = this.current.tables.findIndex(it=>it === item.tableName) >=0 ;
+      if (this.current.dataBase > 0) {
+        const dbUtil = new DataBaseUtil(
+          this.dbList.find(it => it.id == this.current.dataBase).props
+        );
+        dbUtil.listTable().then(({ result, fields }) => {
+          result.forEach(it => {
+            let name = it[fields[0].name];
+            this.tableList.push({
+              tableName: name,
+              _checked: this.current.tables.findIndex(it => it === name) >= 0
+            });
+          });
         });
       }
     },
@@ -209,17 +218,20 @@ export default {
       this.tableList.splice(0, this.tableList.length);
     },
     save() {
-      if(this.current.name === ""){
-        this.$error("请填写项目名称！"); return;
+      if (this.current.name === "") {
+        this.$error("请填写项目名称！");
+        return;
       }
-      if(this.current.dataBase == 0){
-        this.$error("请选择数据库！"); return;
+      if (this.current.dataBase == 0) {
+        this.$error("请选择数据库！");
+        return;
       }
-      if(this.current.tables.length == 0){
-        this.$error("请选择数据表！"); return;
+      if (this.current.tables.length == 0) {
+        this.$error("请选择数据表！");
+        return;
       }
-      for(let item of this.current.templateList){
-        if(item.template == 0 || item.output === ""){
+      for (let item of this.current.templateList) {
+        if (item.template == 0 || item.output === "") {
           this.$error("请填写完整的模板信息！");
           return;
         }
