@@ -105,11 +105,15 @@ export default {
       tableColumns: [
         {
           type: "selection",
-          title: "编号"
+          title: "编号",
+          width: 50
         },
         {
           title: "表名",
           key: "tableName"
+        },{
+          title: "备注",
+          key: "comment"
         }
       ],
       templateList: [], //模板列表
@@ -157,15 +161,18 @@ export default {
         const dbUtil = new DataBaseUtil(
           this.dbList.find(it => it.id == this.current.dataBase).props
         );
-        dbUtil.listTable().then(({ result, fields }) => {
+        dbUtil.listTable().then((result) => {
           result.forEach(it => {
-            let name = it[fields[0].name];
             this.tableList.push({
-              tableName: name,
-              _checked: this.current.tables.findIndex(it => it === name) >= 0
+              tableName: it.table_name,
+              comment: it.table_comment,
+              _checked: this.current.tables.findIndex(it => it === it.table_name) >= 0
             });
           });
         });
+        // dbUtil.listFieldForTable("account_info").then((result)=>{
+        //   console.log(result);
+        // });
       }
     },
     templateShow(id) {

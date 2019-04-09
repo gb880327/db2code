@@ -24,6 +24,7 @@
 import pathChoose from "@/views/PathChoose";
 import config from "@/libs/config";
 const { dialog } = require("electron").remote;
+import DataBaseUtil from "@/libs/database";
 
 export default {
   components: {

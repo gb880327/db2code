@@ -13,6 +13,10 @@
       <Input v-model="dbName" placeholder="请输入数据库..." style="width: 198px"/>
     </div>
     <div class="row">
+      <span class="labelName">数据表前缀：</span>
+      <Input v-model="prefix" placeholder="请输入数据表前缀..." style="width: 198px"/>
+    </div>
+    <div class="row">
       <span class="labelName">用户名：</span>
       <Input v-model="userName" placeholder="请输入用户名..." style="width: 198px"/>
     </div>
@@ -32,7 +36,8 @@ export default {
       port: 3360,
       dbName: "",
       userName: "root",
-      passWord: ""
+      passWord: "",
+      prefix: ""
     };
   },
   methods: {
@@ -43,6 +48,7 @@ export default {
       this.dbName = data.dbName ? data.dbName : "";
       this.userName = data.userName ? data.userName : "";
       this.passWord = data.passWord ? data.passWord : "";
+      this.prefix = data.prefix ? data.prefix : "";
     },
     getData() {
       if (!this.vailHost) {
@@ -64,6 +70,7 @@ export default {
         host: this.host,
         port: this.port,
         dbName: this.dbName,
+        prefix: this.prefix,
         userName: this.userName,
         passWord: this.passWord
       };
@@ -75,6 +82,7 @@ export default {
         this.dbName = "";
         this.userName = "root";
         this.passWord = "";
+        this.prefix = "";
     },
     blurHanlder() {
       let reg = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/g;
