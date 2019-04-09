@@ -186,5 +186,11 @@ export default {
   width: 100%;
   font-weight: bold;
 }
+.tips{
+  padding-left:15px;
+}
+.tips a{
+  color: red;
+}
 </style>
 

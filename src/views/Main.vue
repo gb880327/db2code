@@ -75,10 +75,4 @@ export default {
 .plane .content {
   padding: 10px 20px;
 }
-.tips{
-  padding-left:15px;
-}
-.tips a{
-  color: red;
-}
 </style>

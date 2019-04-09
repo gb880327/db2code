@@ -17,27 +17,16 @@
       <div slot="right" class="pane split-right" :style="{height:getHeight+'px'}">
         <div class="row">
           <span class="labelName">项目名称：</span>
-          <Input v-model="name" placeholder="请输入项目名称..." style="width: 198px"/>
+          <Input v-model="current.name" placeholder="请输入项目名称..." style="width: 198px"/>
         </div>
         <div class="row">
           <span class="labelName">数据库：</span>
-          <Select v-model="dataBase" style="width:200px" @on-change="dbChange">
+          <Select v-model="current.dataBase" style="width:200px" @on-change="dbChange">
             <Option v-for="item in dbList" :value="item.id" :key="item.id">{{ item.name }}</Option>
           </Select>
+          <span class="tips" v-if="dbList.length == 0"><a href="javascript:void(0);" @click="$router.push({ path: '/DBManage' })">添加数据库配置</a></span>
         </div>
-
-        <div class="row" v-for="item,i in itemList" :key="i">
-          <div class="col">
-            <span class="labelName">模板：</span>
-            <Select v-model="item.template" style="width:200px">
-              <Option v-for="item in templateList" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
-          </div>&nbsp;
-          <pathChoose class="col" title="输出目录" v-model="item.output"></pathChoose>&nbsp;&nbsp;
-          <Button type="error">删除</Button>
-        </div>
-        <Button class="add">添加</Button>
-        <div class="row" v-if="tableList.length > 0">
+        <div class="row" v-if="showTable">
           <Row>
             <Col span="8">
               <Table
@@ -54,9 +43,34 @@
             <Col span="16"></Col>
           </Row>
         </div>
+        <div class="row" v-for="item,i in current.templateList" :key="i">
+          <div class="col">
+            <span class="labelName">模板：</span>
+            <Select v-model="item.template" style="width:200px">
+              <Option
+                v-for="item in templateList"
+                :value="item.id"
+                :key="item.id"
+                :disabled="templateShow(item.id)"
+              >{{ item.name }}</Option>
+            </Select>
+          </div>&nbsp;
+          <pathChoose class="col" title="输出目录" v-model="item.output"></pathChoose>&nbsp;&nbsp;
+          <Button type="error" @click="delTemp(item.id)" v-if="current.templateList.length > 1">删除</Button>
+        </div>
+        <div class="row" style="padding-left:100px;">
+          <span class="tips" v-if="templateList.length == 0"><a href="javascript:void(0);" @click="$router.push({ path: '/TemplateManage' })">添加模板</a></span>
+        </div>
+        <Button class="add" @click="addTemp">添加</Button>
         <div class="row">
           <Button type="primary" class="btn" style="width:200px;margin-left:100px;" @click="save">保存</Button>
-          <Button type="error" class="btn" v-if="currentId>0" style="width:200px;" @click="delItem">删除项目</Button>
+          <Button
+            type="error"
+            class="btn"
+            v-if="current.id>0"
+            style="width:200px;"
+            @click="delItem"
+          >删除项目</Button>
         </div>
       </div>
     </Split>
@@ -74,14 +88,19 @@ export default {
     return {
       split: 0.2,
       height: 0,
-      name: "",
-      projectList: [
-        {
-          id: 123,
-          name: "Project1"
-        }
-      ],
-      currentId: 0,
+      current: {
+        id: 0,
+        name: "",
+        tables: [],
+        dataBase: 0,
+        templateList: [
+          {
+            template: 0,
+            output: ""
+          }
+        ]
+      },
+      projectList: [],
       tableColumns: [
         {
           type: "selection",
@@ -94,19 +113,11 @@ export default {
       ],
       templateList: [], //模板列表
       dbList: [], //数据库列表
-      tableList: [], //表
-      itemList: [
-        //添加的生成项
-        {
-          template: 1,
-          output: ""
-        }
-      ],
-      selectTable: [], //选择的表
-      dataBase: ""
+      tableList: [] //表
     };
   },
   mounted() {
+    this.projectList = this.$getDataForObj(config.projectList);
     this.templateList = this.$getDataForObj(config.templateList);
     this.dbList = this.$getDataForObj(config.dbList);
     this.$nextTick(() => {
@@ -116,32 +127,44 @@ export default {
   computed: {
     getHeight() {
       return this.height - 32;
+    },
+    showTable() {
+      return this.tableList.length > 0;
     }
   },
   methods: {
     selectAllHanlder(selection) {
-      this.selectTable.splice(0, this.selectTable.length);
+      this.current.tables.splice(0, this.current.tables.length);
       selection.forEach(item => {
-        this.selectTable.push(item.tableName);
+        this.current.tables.push(item.tableName);
       });
     },
     unselectAllHanlder(selection) {
-      this.selectTable.splice(0, this.selectTable.length);
+      this.current.tables.splice(0, this.current.tables.length);
     },
     unselectHanlder(selection, row) {
-      this.selectTable.splice(
-        this.selectTable.findIndex(it => it === row.tableName),
+      this.current.tables.splice(
+        this.current.tables.findIndex(it => it === row.tableName),
         1
       );
     },
     selectHanlder(selection, row) {
-      this.selectTable.push(row.tableName);
+      this.current.tables.push(row.tableName);
     },
     dbChange() {
-      this.tableList = [{ tableName: "Demo1" }, { tableName: "Demo2" }];
+      if(this.current.dataBase > 0){
+        this.tableList = [{ tableName: "Demo1" }, { tableName: "Demo2" }];
+        this.tableList.forEach(item=>{
+          item['_checked'] = this.current.tables.findIndex(it=>it === item.tableName) >=0 ;
+        });
+      }
+    },
+    templateShow(id) {
+      return (
+        this.current.templateList.findIndex(item => item.template == id) >= 0
+      );
     },
     itemClick(item) {
-      this.currentId = item.id;
       let list = document
         .getElementsByClassName("itemList")[0]
         .getElementsByTagName("li");
@@ -152,11 +175,73 @@ export default {
           it.className = "";
         }
       }
-      this.name = item.name;
+      this.current = item;
+      this.dbChange();
     },
-    addItem() {},
-    save() {},
-    delItem() {}
+    addTemp() {
+      this.current.templateList.push({ template: 0, output: "" });
+    },
+    delTemp(id) {
+      this.current.templateList.splice(
+        this.current.templateList.findIndex(it => it.template == id),
+        1
+      );
+    },
+    addItem() {
+      let list = document
+        .getElementsByClassName("itemList")[0]
+        .getElementsByTagName("li");
+      for (let it of list) {
+        it.className = "";
+      }
+      this.current = {
+        id: 0,
+        name: "",
+        tables: [],
+        dataBase: 0,
+        templateList: [
+          {
+            template: 1,
+            output: ""
+          }
+        ]
+      };
+      this.tableList.splice(0, this.tableList.length);
+    },
+    save() {
+      if(this.current.name === ""){
+        this.$error("请填写项目名称！"); return;
+      }
+      if(this.current.dataBase == 0){
+        this.$error("请选择数据库！"); return;
+      }
+      if(this.current.tables.length == 0){
+        this.$error("请选择数据表！"); return;
+      }
+      for(let item of this.current.templateList){
+        if(item.template == 0 || item.output === ""){
+          this.$error("请填写完整的模板信息！");
+          return;
+        }
+      }
+      if (this.current.id == 0) {
+        this.current.id = new Date().getTime();
+        this.projectList.push(this.current);
+      }
+      this.$saveData(config.projectList, this.projectList);
+      this.addItem();
+      this.$success("保存成功！");
+    },
+    delItem() {
+      this.$confirm("确认是否删除该项目？", () => {
+        this.projectList.splice(
+          this.projectList.findIndex(it => it.id == this.current.id),
+          1
+        );
+        this.$saveData(config.projectList, this.projectList);
+        this.addItem();
+      });
+    }
   }
 };
 </script>
@@ -166,7 +251,7 @@ export default {
   width: 200px;
   border: 1px dashed #dcdee2;
 }
-.add:focus{
+.add:focus {
   box-shadow: none;
 }
 </style>

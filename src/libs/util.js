@@ -44,7 +44,6 @@ export const confirm = (msg, ok, cancel) => {
     swal.fire({
         text: msg,
         type: 'warning',
-        backdrop: false,
         allowOutsideClick: false,
         showCancelButton: true,
         confirmButtonText: "确定",
