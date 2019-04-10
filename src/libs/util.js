@@ -1,11 +1,68 @@
 import swal from "sweetalert2";
+const fs = require("fs");
+const buffer = require("buffer").Buffer;
+
+export const saveToFile = (fileName, data) => {
+    return new Promise((resolve, reject) => {
+        if (!fs.existsSync(fileName)) {
+            error("文件 " + fileName + " 不存在！");
+            resolve(false);
+            return;
+        }
+        console.log(fileName);
+        fs.writeFile(fileName, (data instanceof Object ? JSON.stringify(data) : data), err => {
+            if (err) {
+                error(err);
+                resolve(false);
+            } else {
+                resolve(true);
+            }
+        });
+    });
+};
+
+export const readForFile = (fileName) => {
+    return new Promise((resolve, reject) => {
+        if (!fs.existsSync(fileName)) {
+            error("文件 " + fileName + " 不存在！");
+            resolve(false);
+            return;
+        }
+        fs.readFile(fileName, (err, data) => {
+            if (err) {
+                error(err);
+                resolve(false);
+            } else {
+                resolve(buffer.from(data).toString());
+            }
+        });
+    });
+};
+
+export const listFileForFolder = (folderPath) => {
+    return new Promise((resolve, reject) => {
+        if (!fs.existsSync(folderPath)) {
+            error(folderPath + " 不存在！");
+            resolve(false);
+            return;
+        }
+        fs.readdir(folderPath, (err, files) => {
+            if (err) {
+                error(err);
+                resolve(false);
+            } else {
+                resolve(files);
+            }
+        });
+    });
+}
 
 export const saveData = (key, value) => {
     localStorage.setItem(key, (value instanceof Object) ? JSON.stringify(value) : value);
 };
 export const getDataForObject = (key) => {
     let value = localStorage.getItem(key);
-    return value && value != null ? JSON.parse(value) : "";
+    return value && value != null ? JSON.parse(value) : null;
 };
 export const getDataForStr = (key) => {
     let value = localStorage.getItem(key);

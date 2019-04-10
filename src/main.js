@@ -11,7 +11,10 @@ import {
     confirm,
     saveData,
     getDataForObject,
-    getDataForStr
+    getDataForStr,
+    saveToFile,
+    readForFile,
+    listFileForFolder
 } from '@/libs/util';
 
 
@@ -26,6 +29,10 @@ Vue.prototype.$confirm = confirm;
 Vue.prototype.$saveData = saveData;
 Vue.prototype.$getDataForObj = getDataForObject;
 Vue.prototype.$getDataForStr = getDataForStr;
+Vue.prototype.$saveToFile = saveToFile;
+Vue.prototype.$readForFile = readForFile;
+Vue.prototype.$listFileForFolder = listFileForFolder;
+
 
 const vue = new Vue({
     router,

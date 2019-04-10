@@ -7,6 +7,27 @@ import $this from "@/main.js";
  */
 class DataBaseUtil {
 
+    javaDataType = {
+        'int': 'Integer',
+        'bigint': 'Integer',
+        'smallint': 'Integer',
+        'mediumint': 'Integer',
+        'varchar': 'String',
+        'char': 'String',
+        'tinytext': 'String',
+        'text': 'String',
+        'mediumtext': 'String',
+        'longtext': 'String',
+        'datetime': 'Date',
+        'date': 'Date',
+        'time': 'Date',
+        'timestamp': 'Long',
+        'tinyint': 'Boolean',
+        'decimal': 'Double',
+        'float': 'Double',
+        'double': 'Double'
+    }
+
     constructor(props = {}) {
         this.props = props;
         this.conn = mysql.createConnection({
@@ -20,6 +41,20 @@ class DataBaseUtil {
             if (err) {
                 $this.$error(e);
             }
+        });
+    }
+
+    tableInfo(tableName) {
+        return new Promise((resolve, reject) => {
+            let sql = mysql.format("select table_name, table_comment from information_schema.tables where table_name = ?", tableName);
+            this.conn.query(sql, (error, result, fields) => {
+                if (error) {
+                    $this.$error(error);
+                    reject("查询失败！");
+                } else {
+                    resolve(this.formatTableName(result)[0]);
+                }
+            });
         });
     }
 
@@ -40,47 +75,29 @@ class DataBaseUtil {
     listFieldForTable(tableName) {
         return new Promise((resolve, reject) => {
             let sql = mysql.format("select column_name, data_type, column_comment from information_schema.columns where table_schema = ? and table_name = ?", [this.props.dbName, tableName]);
-            console.log(sql);
             this.conn.query(sql, (error, result, fields) => {
                 if (error) {
                     $this.$error(error);
                     reject("查询失败！");
                 } else {
-                    resolve(result);
+                    let data = [];
+                    result.forEach(item => {
+                        data.push({
+                            columnName: item.column_name,
+                            fieldName: this.formatFieldName(item.column_name),
+                            type: this.javaDataType[item.data_type],
+                            comment: item.column_comment
+                        });
+                    });
+                    resolve(data);
                 }
             });
         });
     }
 
     /**
-     * JAVA对应数据类型
-     */
-    javaDataType() {
-        return {
-            'int': 'Integer',
-            'bigint': 'Integer',
-            'smallint': 'Integer',
-            'mediumint': 'Integer',
-            'varchar': 'String',
-            'char': 'String',
-            'tinytext': 'String',
-            'text': 'String',
-            'mediumtext': 'String',
-            'longtext': 'String',
-            'datetime': 'Date',
-            'date': 'Date',
-            'time': 'Date',
-            'timestamp': 'Long',
-            'tinyint': 'Boolean',
-            'decimal': 'Double',
-            'float': 'Double',
-            'double': 'Double'
-        };
-    }
-
-    /**
      * 处理表名 驼峰命名规则
-     * @param {} result 
+     * @param result 
      */
     formatTableName(result) {
         let data = [];
@@ -97,8 +114,20 @@ class DataBaseUtil {
             });
             data.push(dataItem);
         });
-        console.log(data);
         return data;
+    }
+
+    formatFieldName(fieldName) {
+        fieldName = fieldName.replace('is_', '');
+        let strList = fieldName.split('_');
+        let new_field = "";
+        if (strList.length > 1) {
+            for (let i = 1, j = strList.length; i < j; i++) {
+                strList[i] = strList[i].substr(0, 1).toUpperCase() + strList[i].substr(1, strList[i].length);
+            }
+        }
+        new_field = strList.join('');
+        return new_field;
     }
 }
 

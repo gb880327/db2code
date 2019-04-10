@@ -14,7 +14,19 @@ let config = {
     },
     getProjectPath: () => {
         return getDataForStr(config.dataPath) + "/" + config.project;
-    }
+    },
+
+    attrs: [
+        "imports",
+        "swagger",
+        "className",
+        "entityName",
+        "tableName",
+        "remark",
+        "fields",
+        "primaryKey",
+        "date"
+    ]
 };
 
 export default config;

@@ -20,6 +20,10 @@
           <Input v-model="current.name" placeholder="请输入项目名称..." style="width: 198px"/>
         </div>
         <div class="row">
+          <span class="labelName">packageName：</span>
+          <Input v-model="current.package" placeholder="请输入packageName..." style="width:198px;"></Input>
+        </div>
+        <div class="row">
           <span class="labelName">数据库：</span>
           <Select v-model="current.dataBase" style="width:200px" @on-change="dbChange">
             <Option v-for="item in dbList" :value="item.id" :key="item.id">{{ item.name }}</Option>
@@ -92,6 +96,7 @@ export default {
       current: {
         id: 0,
         name: "",
+        package: "",
         tables: [],
         dataBase: 0,
         templateList: [
@@ -122,7 +127,11 @@ export default {
     };
   },
   mounted() {
+    this.$listFileForFolder(config.getProjectPath()).then(data=>{
+      console.log(data);
+    });
     this.projectList = this.$getDataForObj(config.projectList);
+    this.projectList = this.projectList == null ? [] : this.projectList;
     this.templateList = this.$getDataForObj(config.templateList);
     this.dbList = this.$getDataForObj(config.dbList);
     this.$nextTick(() => {
@@ -162,17 +171,14 @@ export default {
           this.dbList.find(it => it.id == this.current.dataBase).props
         );
         dbUtil.listTable().then((result) => {
-          result.forEach(it => {
+          result.forEach(item => {
             this.tableList.push({
-              tableName: it.table_name,
-              comment: it.table_comment,
-              _checked: this.current.tables.findIndex(it => it === it.table_name) >= 0
+              tableName: item.table_name,
+              comment: item.table_comment,
+              _checked: this.current.tables.findIndex(it => it === item.table_name) >= 0
             });
           });
         });
-        // dbUtil.listFieldForTable("account_info").then((result)=>{
-        //   console.log(result);
-        // });
       }
     },
     templateShow(id) {
@@ -229,6 +235,10 @@ export default {
         this.$error("请填写项目名称！");
         return;
       }
+      if (this.current.package === "") {
+        this.$error("请填写packageName！");
+        return;
+      }
       if (this.current.dataBase == 0) {
         this.$error("请选择数据库！");
         return;
@@ -247,6 +257,11 @@ export default {
         this.current.id = new Date().getTime();
         this.projectList.push(this.current);
       }
+
+      this.$saveToFile(config.getProjectPath()+"/"+this.current.name+".json", this.current).then(data=>{
+        console.log(data);
+      });
+
       this.$saveData(config.projectList, this.projectList);
       this.addItem();
       this.$success("保存成功！");

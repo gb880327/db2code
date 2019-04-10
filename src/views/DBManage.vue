@@ -72,7 +72,7 @@ export default {
   methods: {
     init() {
       let data = this.$getDataForObj(config.dbList);
-      this.dbList = data === "" ? [] : data;
+      this.dbList = data === null ? [] : data;
       this.$saveData(config.dbList, this.dbList);
     },
     itemClick(item) {
