@@ -33,7 +33,7 @@ const buffer = require("buffer").Buffer;
 import ace from "ace-builds";
 import "ace-builds/webpack-resolver"; // 在 webpack 环境中使用必须要导入
 import swal from "sweetalert2";
-import { constants } from "crypto";
+
 
 export default {
   data() {

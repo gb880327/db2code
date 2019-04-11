@@ -74,7 +74,7 @@ class DataBaseUtil {
 
     listFieldForTable(tableName) {
         return new Promise((resolve, reject) => {
-            let sql = mysql.format("select column_name, data_type, column_comment from information_schema.columns where table_schema = ? and table_name = ?", [this.props.dbName, tableName]);
+            let sql = mysql.format("select column_name, data_type,column_key , column_comment from information_schema.columns where table_schema = ? and table_name = ?", [this.props.dbName, tableName]);
             this.conn.query(sql, (error, result, fields) => {
                 if (error) {
                     $this.$error(error);
@@ -86,7 +86,8 @@ class DataBaseUtil {
                             columnName: item.column_name,
                             fieldName: this.formatFieldName(item.column_name),
                             type: this.javaDataType[item.data_type],
-                            comment: item.column_comment
+                            comment: item.column_comment,
+                            pri: item.column_key === 'PRI'
                         });
                     });
                     resolve(data);

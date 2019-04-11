@@ -16,17 +16,16 @@ let config = {
         return getDataForStr(config.dataPath) + "/" + config.project;
     },
 
-    attrs: [
-        "imports",
-        "swagger",
-        "className",
-        "entityName",
-        "tableName",
-        "remark",
-        "fields",
-        "primaryKey",
-        "date"
-    ]
+    attrs: {
+        packageName: "packageName",
+        imports: "imports",
+        swagger: "swagger",
+        entityName: "entityName",
+        tableName: "tableName",
+        remark: "remark",
+        fields: "fields",
+        date: "date"
+    }
 };
 
 export default config;

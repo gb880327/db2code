@@ -24,6 +24,13 @@
           <Input v-model="current.package" placeholder="请输入packageName..." style="width:198px;"></Input>
         </div>
         <div class="row">
+          <span class="labelName">swagger API：</span>
+          <i-switch size="large" v-model="current.swagger">
+              <span slot="open">开启</span>
+              <span slot="close">关闭</span>
+          </i-switch>
+        </div>
+        <div class="row">
           <span class="labelName">数据库：</span>
           <Select v-model="current.dataBase" style="width:200px" @on-change="dbChange">
             <Option v-for="item in dbList" :value="item.id" :key="item.id">{{ item.name }}</Option>
@@ -97,6 +104,7 @@ export default {
         id: 0,
         name: "",
         package: "",
+        swagger: false,
         tables: [],
         dataBase: 0,
         templateList: [
@@ -128,10 +136,16 @@ export default {
   },
   mounted() {
     this.$listFileForFolder(config.getProjectPath()).then(data=>{
-      console.log(data);
+      if(data.length > 0){
+        data.forEach(item=>{
+          this.$readForFile(config.getProjectPath()+'/'+item).then(data=>{
+            if(data && data.length > 0){
+              this.projectList.push(JSON.parse(data));
+            }
+          });
+        });
+      }
     });
-    this.projectList = this.$getDataForObj(config.projectList);
-    this.projectList = this.projectList == null ? [] : this.projectList;
     this.templateList = this.$getDataForObj(config.templateList);
     this.dbList = this.$getDataForObj(config.dbList);
     this.$nextTick(() => {
@@ -220,6 +234,8 @@ export default {
         id: 0,
         name: "",
         tables: [],
+        package:"",
+        swagger: false,
         dataBase: 0,
         templateList: [
           {
@@ -259,12 +275,9 @@ export default {
       }
 
       this.$saveToFile(config.getProjectPath()+"/"+this.current.name+".json", this.current).then(data=>{
-        console.log(data);
+        this.addItem();
+        this.$success("保存成功！");  
       });
-
-      this.$saveData(config.projectList, this.projectList);
-      this.addItem();
-      this.$success("保存成功！");
     },
     delItem() {
       this.$confirm("确认是否删除该项目？", () => {

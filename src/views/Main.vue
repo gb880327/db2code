@@ -17,6 +17,11 @@
         <Button type="primary" icon="md-arrow-dropright-circle" :disabled="projectId == 0" @click="exec">执行</Button>
         <span class="tips" v-if="projectList.length == 0"><a href="javascript:void(0);" @click="gotoProject">添加项目</a></span>
       </div>
+      <div class="result">
+        <ul>
+          <li v-for="item,index of results" :key="index">{{item}}</li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -25,6 +30,7 @@ import pathChoose from "@/views/PathChoose";
 import config from "@/libs/config";
 const { dialog } = require("electron").remote;
 import DataBaseUtil from "@/libs/database";
+import TemplateUtil from "@/libs/template";
 
 export default {
   components: {
@@ -35,11 +41,22 @@ export default {
       height: 0,
       dataPath: "",
       projectId: 0,
-      projectList:[]
+      projectList:[],
+      results:[]
     };
   },
   mounted() {
-    this.projectList = this.$getDataForObj(config.projectList);
+    this.$listFileForFolder(config.getProjectPath()).then(data=>{
+      if(data.length > 0){
+        data.forEach(item=>{
+          this.$readForFile(config.getProjectPath()+'/'+item).then(data=>{
+            if(data && data.length > 0){
+              this.projectList.push(JSON.parse(data));
+            }
+          });
+        });
+      }
+    }); 
     this.$nextTick(() => {
       this.dataPath = this.$getDataForStr(config.dataPath);
       this.height = this.$parent.$el.clientHeight;
@@ -52,7 +69,12 @@ export default {
   },
   methods: {
     exec(){
-      
+      this.results = [];
+      let project = this.projectList.find(item=>item.id == this.projectId);
+      let templateUtil = new TemplateUtil();
+      templateUtil.genTemplate(project, (item)=>{
+        this.results.push(item);
+      });
     },
     selectPath(path) {
       this.$saveData(config.dataPath, this.dataPath);
@@ -78,5 +100,21 @@ export default {
 }
 .plane .content {
   padding: 10px 20px;
+}
+.plane .result{
+  background-color: #080606bd;
+  color: #FFFFFF;
+  margin: 10px;
+  height: 400px;
+  font-size: 14px;
+}
+.plane .result ul{
+  list-style: none;
+  margin: 0px;
+  padding: 5px 0 0 0;
+}
+.plane .result ul li{
+  padding: 0px;
+  margin: 2px 0 2px 10px;
 }
 </style>
