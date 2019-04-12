@@ -73,6 +73,10 @@ export default {
       let project = this.projectList.find(item=>item.id == this.projectId);
       let templateUtil = new TemplateUtil();
       templateUtil.genTemplate(project, (item)=>{
+        if(item == 'done'){
+          item = '执行完成！';
+          this.$success("执行完成！");
+        }
         this.results.push(item);
       });
     },

@@ -147,8 +147,8 @@ export default {
           }
         });
         if (text && text != "") {
-          item.fileName = text;
-          item.filePath = config.getTemplatePath() + "/" + text;
+          item.fileName = text + '.ejs';
+          item.filePath = config.getTemplatePath() + "/" + item.fileName;
           item.name = _this.name;
           if (_this.currentId == 0) {
             item.id = new Date().getTime();
@@ -158,8 +158,8 @@ export default {
             _this.templateList[index] = item;
           }
 
-          if (fs.existsSync(config.getTemplatePath() + "/" + text)) {
-            _this.$confirm("文件 " + text + " 已存在，是否覆盖！", () => {
+          if (fs.existsSync(config.getTemplatePath() + "/" + item.fileName)) {
+            _this.$confirm("文件 " + tem.fileName + " 已存在，是否覆盖！", () => {
               _this.writeFile(item);
             });
           } else {

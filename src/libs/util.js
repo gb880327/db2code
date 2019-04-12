@@ -1,10 +1,22 @@
 import swal from "sweetalert2";
 const fs = require("fs");
+const path = require("path");
 const buffer = require("buffer").Buffer;
 
-export const saveToFile = (fileName, data) => {
+
+export const mkdirs = (dir, cb) => {
+    let filePath = path.dirname(dir);
+    if (!fs.existsSync(filePath)) {
+        mkdirs(filePath, () => {
+            fs.mkdirSync(filePath)
+        });
+    }
+    cb && cb()
+};
+
+export const saveToFile = (fileName, data, checkExists = true) => {
     return new Promise((resolve, reject) => {
-        if (!fs.existsSync(fileName)) {
+        if (checkExists && !fs.existsSync(fileName)) {
             error("文件 " + fileName + " 不存在！");
             resolve(false);
             return;
