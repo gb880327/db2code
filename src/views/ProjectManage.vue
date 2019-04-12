@@ -26,8 +26,8 @@
         <div class="row">
           <span class="labelName">swagger API：</span>
           <i-switch size="large" v-model="current.swagger">
-              <span slot="open">开启</span>
-              <span slot="close">关闭</span>
+            <span slot="open">开启</span>
+            <span slot="close">关闭</span>
           </i-switch>
         </div>
         <div class="row">
@@ -91,6 +91,7 @@ import config from "@/libs/config";
 import pathChoose from "@/views/PathChoose";
 import DataBaseUtil from "@/libs/database";
 import { constants } from "crypto";
+import { type } from "os";
 
 export default {
   components: {
@@ -124,7 +125,8 @@ export default {
         {
           title: "表名",
           key: "tableName"
-        },{
+        },
+        {
           title: "备注",
           key: "comment"
         }
@@ -135,19 +137,25 @@ export default {
     };
   },
   mounted() {
-    this.$listFileForFolder(config.getProjectPath()).then(data=>{
-      if(data.length > 0){
-        data.forEach(item=>{
-          this.$readForFile(config.getProjectPath()+'/'+item).then(data=>{
-            if(data && data.length > 0){
-              this.projectList.push(JSON.parse(data));
-            }
-          });
+    this.$listFileForFolder(config.getProjectPath()).then(data => {
+      if (data) {
+        data.forEach(item => {
+          if (item.endsWith(".json")) {
+            this.$readForFile(config.getProjectPath() + "/" + item).then(
+              ret => {
+                if (ret) {
+                  this.projectList.push(JSON.parse(ret));
+                }
+              }
+            );
+          }
         });
       }
     });
     this.templateList = this.$getDataForObj(config.templateList);
+    this.templateList = this.templateList == null ? [] : this.templateList;
     this.dbList = this.$getDataForObj(config.dbList);
+    this.dbList = this.dbList == null ? [] : this.dbList;
     this.$nextTick(() => {
       this.height = this.$parent.$el.clientHeight;
     });
@@ -181,18 +189,21 @@ export default {
     },
     dbChange() {
       if (this.current.dataBase > 0) {
-        const dbUtil = new DataBaseUtil(
-          this.dbList.find(it => it.id == this.current.dataBase).props
-        );
-        dbUtil.listTable().then((result) => {
-          result.forEach(item => {
-            this.tableList.push({
-              tableName: item.table_name,
-              comment: item.table_comment,
-              _checked: this.current.tables.findIndex(it => it === item.table_name) >= 0
+        let db = this.dbList.find(it => it.id == this.current.dataBase);
+        if (db) {
+          const dbUtil = new DataBaseUtil(db.props);
+          dbUtil.listTable().then(result => {
+            result.forEach(item => {
+              this.tableList.push({
+                tableName: item.table_name,
+                comment: item.table_comment,
+                _checked:
+                  this.current.tables.findIndex(it => it === item.table_name) >=
+                  0
+              });
             });
           });
-        });
+        }
       }
     },
     templateShow(id) {
@@ -234,7 +245,7 @@ export default {
         id: 0,
         name: "",
         tables: [],
-        package:"",
+        package: "",
         swagger: false,
         dataBase: 0,
         templateList: [
@@ -274,9 +285,12 @@ export default {
         this.projectList.push(this.current);
       }
 
-      this.$saveToFile(config.getProjectPath()+"/"+this.current.name+".json", this.current).then(data=>{
+      this.$saveToFile(
+        config.getProjectPath() + "/" + this.current.name + ".json",
+        this.current
+      ).then(data => {
         this.addItem();
-        this.$success("保存成功！");  
+        this.$success("保存成功！");
       });
     },
     delItem() {

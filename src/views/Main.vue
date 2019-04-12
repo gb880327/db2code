@@ -12,10 +12,16 @@
         <span>项目：</span>
         <Select v-model="projectId" style="width:200px">
           <Option v-for="item in projectList" :value="item.id" :key="item.id">{{ item.name }}</Option>
-        </Select>
-        &nbsp;&nbsp;
-        <Button type="primary" icon="md-arrow-dropright-circle" :disabled="projectId == 0" @click="exec">执行</Button>
-        <span class="tips" v-if="projectList.length == 0"><a href="javascript:void(0);" @click="gotoProject">添加项目</a></span>
+        </Select>&nbsp;&nbsp;
+        <Button
+          type="primary"
+          icon="md-arrow-dropright-circle"
+          :disabled="projectId == 0"
+          @click="exec"
+        >执行</Button>
+        <span class="tips" v-if="projectList.length == 0">
+          <a href="javascript:void(0);" @click="gotoProject">添加项目</a>
+        </span>
       </div>
       <div class="result">
         <ul>
@@ -41,22 +47,26 @@ export default {
       height: 0,
       dataPath: "",
       projectId: 0,
-      projectList:[],
-      results:[]
+      projectList: [],
+      results: []
     };
   },
   mounted() {
-    this.$listFileForFolder(config.getProjectPath()).then(data=>{
-      if(data.length > 0){
-        data.forEach(item=>{
-          this.$readForFile(config.getProjectPath()+'/'+item).then(data=>{
-            if(data && data.length > 0){
-              this.projectList.push(JSON.parse(data));
-            }
-          });
+    this.$listFileForFolder(config.getProjectPath()).then(data => {
+      if (data.length > 0) {
+        data.forEach(item => {
+          if (item.endsWith(".json")) {
+            this.$readForFile(config.getProjectPath() + "/" + item).then(
+              ret => {
+                if (ret) {
+                  this.projectList.push(JSON.parse(ret));
+                }
+              }
+            );
+          }
         });
       }
-    }); 
+    });
     this.$nextTick(() => {
       this.dataPath = this.$getDataForStr(config.dataPath);
       this.height = this.$parent.$el.clientHeight;
@@ -68,13 +78,13 @@ export default {
     }
   },
   methods: {
-    exec(){
+    exec() {
       this.results = [];
-      let project = this.projectList.find(item=>item.id == this.projectId);
+      let project = this.projectList.find(item => item.id == this.projectId);
       let templateUtil = new TemplateUtil();
-      templateUtil.genTemplate(project, (item)=>{
-        if(item == 'done'){
-          item = '执行完成！';
+      templateUtil.genTemplate(project, item => {
+        if (item == "done") {
+          item = "执行完成！";
           this.$success("执行完成！");
         }
         this.results.push(item);
@@ -83,8 +93,8 @@ export default {
     selectPath(path) {
       this.$saveData(config.dataPath, this.dataPath);
     },
-    gotoProject(){
-      this.$router.push({ path: '/projectManage' });
+    gotoProject() {
+      this.$router.push({ path: "/projectManage" });
     }
   }
 };
@@ -105,19 +115,19 @@ export default {
 .plane .content {
   padding: 10px 20px;
 }
-.plane .result{
+.plane .result {
   background-color: #080606bd;
-  color: #FFFFFF;
+  color: #ffffff;
   margin: 10px;
   height: 400px;
   font-size: 14px;
 }
-.plane .result ul{
+.plane .result ul {
   list-style: none;
   margin: 0px;
   padding: 5px 0 0 0;
 }
-.plane .result ul li{
+.plane .result ul li {
   padding: 0px;
   margin: 2px 0 2px 10px;
 }
