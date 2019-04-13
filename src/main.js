@@ -16,11 +16,13 @@ import {
     readForFile,
     listFileForFolder
 } from '@/libs/util';
+const path = require("path");
 
 
 Vue.config.productionTip = false
 Vue.use(iView);
 
+Vue.prototype.$path = path;
 Vue.prototype.$success = success;
 Vue.prototype.$error = error;
 Vue.prototype.$warning = warning;

@@ -1,20 +1,12 @@
-import { getDataForStr } from "@/libs/util";
+const os = require("os");
+const path = require("path");
+const basePath = path.join(os.homedir(), '.codegen');
 
 let config = {
-    dataPath: "DataPath",
-    template: "template",
-    project: "project",
-
-    dbList: "DBList",
-    templateList: "TemplateList",
-    projectList: "ProjectList",
+    dataPath: basePath,
+    template: path.join(basePath, 'template'),
+    project: path.join(basePath, 'project'),
     dbType: ["mysql"],
-    getTemplatePath: () => {
-        return getDataForStr(config.dataPath) + "/" + config.template;
-    },
-    getProjectPath: () => {
-        return getDataForStr(config.dataPath) + "/" + config.project;
-    },
 
     attrs: {
         packageName: "packageName",

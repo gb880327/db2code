@@ -1,13 +1,6 @@
 <template>
   <div class="main" :style="{height: getHeight+'px'}">
     <div class="plane">
-      <span class="title">系统设置：</span>
-      <div class="content">
-        <pathChoose v-model="dataPath" @change="selectPath"></pathChoose>
-      </div>
-    </div>
-
-    <div class="plane">
       <div class="content">
         <span>项目：</span>
         <Select v-model="projectId" style="width:200px">
@@ -45,7 +38,6 @@ export default {
   data() {
     return {
       height: 0,
-      dataPath: "",
       projectId: 0,
       projectList: [],
       results: []
@@ -68,7 +60,6 @@ export default {
       }
     });
     this.$nextTick(() => {
-      this.dataPath = this.$getDataForStr(config.dataPath);
       this.height = this.$parent.$el.clientHeight;
     });
   },
@@ -89,9 +80,6 @@ export default {
         }
         this.results.push(item);
       });
-    },
-    selectPath(path) {
-      this.$saveData(config.dataPath, this.dataPath);
     },
     gotoProject() {
       this.$router.push({ path: "/projectManage" });

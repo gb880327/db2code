@@ -4,23 +4,14 @@
       <Header :style="{position: 'fixed', width: '100%', padding: '0 10px'}">
         <Button type="primary" shape="circle" icon="md-home" @click="gotoPath('/')"></Button>&nbsp;&nbsp;&nbsp;&nbsp;
         <Button type="primary" icon="ios-briefcase" @click="gotoPath('/ProjectManage')">项目管理</Button>&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button type="primary" icon="ios-construct-outline" @click="gotoPath('/DBManage')">数据库配置</Button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <!-- <Button type="primary" icon="ios-construct-outline" @click="gotoPath('/DBManage')">数据库配置</Button>&nbsp;&nbsp;&nbsp;&nbsp; -->
         <Button type="primary" icon="md-code-working" @click="gotoPath('/TemplateManage')">模板配置</Button>&nbsp;&nbsp;&nbsp;&nbsp;
       </Header>
       <Content :style="{margin: '75px 10px 0', background: '#fff', height: (height-116)+'px'}">
-        <router-view ref="view" v-if="is_show"></router-view>
+        <router-view ref="view"></router-view>
       </Content>
       <Footer class="layout-footer-center">2019 &copy; Rookie</Footer>
     </Layout>
-
-    <Modal v-model="setDataPath" title="设置系统配置保存路径！" :mask-closable="false">
-      <div style="padding: 10px; text-align:center;">
-        <pathChoose @change="changeHanlder" :showLabel="false"></pathChoose>
-        <br>
-        <Button type="primary" @click="save">保存</Button>
-      </div>
-      <div slot="footer"></div>
-    </Modal>
   </div>
 </template>
 
@@ -37,10 +28,7 @@ export default {
   },
   data() {
     return {
-      height: document.documentElement.clientHeight,
-      setDataPath: false,
-      dataPath: "",
-      is_show: false
+      height: document.documentElement.clientHeight
     };
   },
   mounted() {
@@ -52,7 +40,6 @@ export default {
   },
   methods: {
     gotoPath(path) {
-      let tempPath = localStorage.getItem(config.templatePath);
       this.$router.push({ path: path });
     },
     resizeHandler(event) {
@@ -61,34 +48,23 @@ export default {
         this.$refs.view.height = this.height - 116;
       });
     },
-    changeHanlder(path) {
-      this.dataPath = path;
-    },
-    save() {
-      if (this.dataPath === "") {
-        this.$error("请选择系统配置保存路径！");
-        return;
-      }
-      this.$saveData(config.dataPath, this.dataPath);
-      this.setDataPath = false;
-      this.is_show = true;
-    },
     checkPath() {
-      let dataPath = this.$getDataForStr(config.dataPath);
-      if (dataPath === "") {
-        this.setDataPath = true;
-        return;
-      }
-      this.is_show = true;
-      if (!fs.existsSync(dataPath + "/" + config.template)) {
-        fs.mkdir(dataPath + "/" + config.template, err => {
+      if (!fs.existsSync(config.dataPath)) {
+        fs.mkdir(config.dataPath, err=>{
           if (err) {
             this.$error(err);
           }
         });
       }
-      if (!fs.existsSync(dataPath + "/" + config.project)) {
-        fs.mkdir(dataPath + "/" + config.project, err => {
+      if (!fs.existsSync(config.template)) {
+        fs.mkdir(config.template, err => {
+          if (err) {
+            this.$error(err);
+          }
+        });
+      }
+      if (!fs.existsSync(config.project)) {
+        fs.mkdir(config.project, err => {
           if (err) {
             this.$error(err);
           }

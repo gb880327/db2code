@@ -19,7 +19,7 @@
           <span class="labelName">模板名称：</span>
           <Input v-model="name" placeholder="请输入模板名称..." style="width: 198px"/>&nbsp;&nbsp;&nbsp;&nbsp;
           <Button type="primary" class="btn" @click="save">保存</Button>
-          <Button type="error" class="btn" v-if="currentId>0" @click="delItem">删除</Button>
+          <Button type="error" class="btn" v-if="showDelete" @click="delItem">删除</Button>
         </div>
         <div class="ace-editor" ref="ace"></div>
       </div>
@@ -28,33 +28,26 @@
 </template>
 <script>
 import config from "@/libs/config";
-const fs = require("fs");
-const buffer = require("buffer").Buffer;
 import ace from "ace-builds";
 import "ace-builds/webpack-resolver"; // 在 webpack 环境中使用必须要导入
-import swal from "sweetalert2";
-
+import Service from "@/libs/service";
 
 export default {
   data() {
     return {
+      service: new Service(),
       aceEditor: null,
       themePath: "ace/theme/monokai",
       modePath: "ace/mode/java",
       split: 0.2,
       height: 0,
-      currentId: 0,
       templateList: [],
-      tempPath: "",
+      current: {},
       name: ""
     };
   },
   mounted() {
-    let list = localStorage.getItem(config.templateList);
-    this.templateList =
-      list && list != null && list != "" ? JSON.parse(list) : [];
-
-    this.tempPath = config.getTemplatePath();
+    this.loadData();
     this.$nextTick(() => {
       this.height = this.$parent.$el.clientHeight;
       this.aceEditor = ace.edit(this.$refs.ace, {
@@ -70,11 +63,19 @@ export default {
   computed: {
     getHeight() {
       return this.height - 32;
+    },
+    showDelete() {
+      return this.templateList.findIndex(item => item.name === this.name) >= 0;
     }
   },
   methods: {
+    loadData() {
+      this.templateList.splice(0, this.templateList.length);
+      this.service.listTemplate().then(data=>{
+        this.templateList = data;
+      });
+    },
     itemClick(item) {
-      this.currentId = item.id;
       let list = document
         .getElementsByClassName("itemList")[0]
         .getElementsByTagName("li");
@@ -85,21 +86,20 @@ export default {
           it.className = "";
         }
       }
-      this.name = item.name;
-      if (!fs.existsSync(item.filePath)) {
-        this.$error("模板文件：" + item.filePath + "不存在！");
-      } else {
-        fs.readFile(item.filePath, (err, data) => {
-          this.aceEditor.setValue(buffer.from(data).toString(), -1);
-        });
-      }
+      this.current = item;
+      this.service.getInfo(item.path, false).then(data=>{
+        if(data){
+          this.name = item.name;
+          this.aceEditor.setValue(data, -1);
+        }
+      });
     },
     addItem() {
-      if (this.currentId == 0) {
+      if (this.name == "") {
         return;
       }
       this.name = "";
-      this.currentId = 0;
+      this.current = {};
       this.aceEditor.setValue("", -1);
       let list = document
         .getElementsByClassName("itemList")[0]
@@ -117,92 +117,28 @@ export default {
         this.$error("请填写模板内容！");
         return;
       }
-      let item = {};
-      let index = 0;
-      if (this.currentId > 0) {
-        index = this.templateList.findIndex(item => item.id == this.currentId);
-        item = this.templateList[index];
-      } else {
-        item = {
-          name: "",
-          fileName: "",
-          filePath: ""
-        };
-      }
-      const _this = this;
-      (async function getText() {
-        const { value: text } = await swal.fire({
-          input: "text",
-          inputValue: item.fileName,
-          inputPlaceholder: "请输入文件名...",
-          showCancelButton: true,
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          inputValidator: value => {
-            if (!value) {
-              return "请输入文件名!";
-            }
-          }
-        });
-        if (text && text != "") {
-          item.fileName = text + '.ejs';
-          item.filePath = config.getTemplatePath() + "/" + item.fileName;
-          item.name = _this.name;
-          if (_this.currentId == 0) {
-            item.id = new Date().getTime();
-            _this.currentId = item.id;
-            _this.templateList.push(item);
-          } else {
-            _this.templateList[index] = item;
-          }
-
-          if (fs.existsSync(config.getTemplatePath() + "/" + item.fileName)) {
-            _this.$confirm("文件 " + tem.fileName + " 已存在，是否覆盖！", () => {
-              _this.writeFile(item);
-            });
-          } else {
-            _this.writeFile(item);
-          }
-        }
-      })();
-    },
-    writeFile(item) {
-      fs.writeFile(item.filePath, this.aceEditor.getValue(), err => {
-        if (err) {
-          location.reload();
-          this.$error(err);
-          console.log(err);
-        } else {
-          this.$saveData(config.templateList, this.templateList);
+      this.service.saveProject(this.current.name, {name: this.name, data: this.aceEditor.getValue()}, 1).then(data => {
+        if (data) {
           this.$success("保存成功！");
+          this.addItem();
+          this.loadData();
+        } else {
+          this.$error("保存失败！");
         }
       });
     },
     delItem() {
-      let index = this.templateList.findIndex(it => it.id == this.currentId);
-      if (index >= 0) {
-        this.$confirm("确认删除该模板？", () => {
-          if (fs.existsSync(this.templateList[index].filePath)) {
-            fs.unlink(this.templateList[index].filePath, err => {
-              if (err) {
-                this.$error(err);
-              } else {
-                this.templateList.splice(index, 1);
-                this.$saveData(config.templateList, this.templateList);
-                this.addItem();
-                this.$success("删除成功！");
-              }
-            });
-          } else {
-            this.templateList.splice(index, 1);
-            this.$saveData(config.templateList, this.templateList);
-            this.addItem();
+      this.service
+        .delProject(this.current.name, this.current.path, 1)
+        .then(data => {
+          if (data) {
             this.$success("删除成功！");
+            this.addItem();
+            this.loadData();
+          } else {
+            this.$error("删除失败！");
           }
         });
-      }
     }
   }
 };
