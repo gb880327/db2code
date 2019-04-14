@@ -15,9 +15,11 @@ let win
 protocol.registerStandardSchemes(['app'], { secure: true })
 
 function createWindow() {
+    const electronScreen = require('electron').screen
+    const size = electronScreen.getPrimaryDisplay().size
 
     // Create the browser window.
-    win = new BrowserWindow({ width: 800, height: 600 })
+    win = new BrowserWindow({ width: size.width, height: size.height })
         // win.webContents.openDevTools();
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
