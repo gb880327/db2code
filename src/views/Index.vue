@@ -5,22 +5,27 @@
         <Button type="primary" shape="circle" icon="md-home" @click="gotoPath('/')"></Button>&nbsp;&nbsp;&nbsp;&nbsp;
         <Button type="primary" icon="ios-briefcase" @click="gotoPath('/ProjectManage')">项目管理</Button>&nbsp;&nbsp;&nbsp;&nbsp;
         <Button type="primary" icon="md-code-working" @click="gotoPath('/TemplateManage')">模板配置</Button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button type="primary" icon="ios-cog" @click="$refs.setting.show()">系统设置</Button>&nbsp;&nbsp;&nbsp;&nbsp;
       </Header>
       <Content :style="{margin: '75px 10px 0', background: '#fff', height: (height-116)+'px'}">
         <router-view ref="view"></router-view>
       </Content>
       <Footer class="layout-footer-center">2019 &copy; Rookie</Footer>
     </Layout>
+    <Setting ref="setting"></Setting>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import config from "@/libs/config";
-const { dialog } = require("electron").remote;
 const fs = require("fs");
+import Setting from "@/views/setting";
 
 export default {
+  components:{
+    Setting
+  },
   data() {
     return {
       height: document.documentElement.clientHeight
