@@ -25,7 +25,7 @@ class Service {
                     data.forEach(item => {
                         this.projectList.push({
                             name: item.replace('.json', ''),
-                            path: path.join(config.project, item)
+                            fileName: item
                         });
                     });
                 }
@@ -42,7 +42,7 @@ class Service {
                     data.forEach(item => {
                         this.templateList.push({
                             name: item.replace(".ejs", ""),
-                            path: path.join(config.template, item)
+                            fileName: item
                         });
                     });
                 }

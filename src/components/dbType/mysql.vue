@@ -43,12 +43,14 @@ export default {
   methods: {
     setData(data){
       this.vailHost = true;
-      this.host = data.host ? data.host : "localhost";
-      this.port = data.port ? data.port : 3306;
-      this.dbName = data.dbName ? data.dbName : "";
-      this.userName = data.userName ? data.userName : "";
-      this.passWord = data.passWord ? data.passWord : "";
-      this.prefix = data.prefix ? data.prefix : "";
+      if(data){
+        this.host = data.host ? data.host : "localhost";
+        this.port = data.port ? data.port : 3306;
+        this.dbName = data.dbName ? data.dbName : "";
+        this.userName = data.userName ? data.userName : "";
+        this.passWord = data.passWord ? data.passWord : "";
+        this.prefix = data.prefix ? data.prefix : "";
+      }
     },
     getData() {
       if (!this.vailHost) {
@@ -75,12 +77,12 @@ export default {
         passWord: this.passWord
       };
     },
-    clean(){
+    clear(){
         this.vailHost = true;
-        this.host = "localhost";
+        this.host = "";
         this.port = 3360;
         this.dbName = "";
-        this.userName = "root";
+        this.userName = "";
         this.passWord = "";
         this.prefix = "";
     },

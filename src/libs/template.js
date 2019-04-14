@@ -18,22 +18,9 @@ class TemplateUtil {
         this.props = null;
         this.count = 0;
         this.total = 0;
-        this.tempList = getDataForObject(config.templateList);
         ejs.fileLoader = (filePath) => {
-            return buffer.from(fs.readFileSync(config.getTemplatePath() + "/" + filePath)).toString();
+            return buffer.from(fs.readFileSync(path.join(config.template, filePath))).toString();
         };
-    }
-
-    getDataBaseInfo(id) {
-        let dbList = getDataForObject(config.dbList);
-        if (!dbList || dbList == null) {
-            return null;
-        }
-        return dbList.find(item => item.id == id);
-    }
-
-    getTemplate(id) {
-        return this.tempList.find(it => it.id == id);
     }
 
     getAttrs(tableName) {
@@ -59,7 +46,7 @@ class TemplateUtil {
         });
     }
 
-    genTemplate(props, callback) {
+    genTemplate(props, tableList, callback) {
         const isOver = () => {
             this.count += 1;
             if (this.count == this.total) {
@@ -67,21 +54,20 @@ class TemplateUtil {
             }
         }
         this.props = props;
-        this.dbUtil = new DataBaseUtil(this.getDataBaseInfo(props.dataBase).props);
+        this.dbUtil = new DataBaseUtil(props.dataBase.props);
         let templateList = props.templateList;
-        this.total = templateList.length * props.tables.length;
+        this.total = templateList.length * tableList.length;
         this.count = 0;
         templateList.forEach(item => {
-            let template = this.getTemplate(item.template);
-            props.tables.forEach(table => {
+            tableList.forEach(table => {
                 this.getAttrs(table).then(attrs => {
-                    ejs.renderFile(template.fileName, attrs, (err, str) => {
+                    ejs.renderFile(item.template, attrs, (err, str) => {
                         if (err) {
                             callback(table + " 生成失败！");
                             isOver();
                         } else {
                             let filePath = path.join(item.output, attrs[config.attrs.packageName].replace('.', '/') + '/');
-                            filePath = path.join(filePath, attrs[config.attrs.entityName] + ".java");
+                            filePath = path.join(filePath, attrs[config.attrs.entityName] + item.fileName);
                             if (!fs.existsSync(filePath)) {
                                 mkdirs(filePath);
                             }

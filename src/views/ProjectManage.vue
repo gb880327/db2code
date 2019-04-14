@@ -8,15 +8,20 @@
         </div>
         <div class="left-list" :style="{height: (getHeight - 38)+'px'}">
           <ul class="itemList">
-            <li v-for="item in projectList" :key="item.id" :id="item.id" @click="itemClick(item)">
+            <li
+              v-for="item in projectList"
+              :key="item.name"
+              :id="item.name"
+              @click="itemClick(item)"
+            >
               <span>{{item.name}}</span>
             </li>
           </ul>
         </div>
       </div>
       <div slot="right" class="pane split-right" :style="{height:getHeight+'px'}">
-        <Tabs type="card">
-          <TabPane label="项目信息">
+        <Tabs v-model="currentTab" type="line" @on-click="tabClickHandler">
+          <TabPane label="项目信息" name="project">
             <div class="row">
               <span class="labelName">项目名称：</span>
               <Input v-model="data.name" placeholder="请输入项目名称..." style="width: 198px"/>
@@ -33,41 +38,35 @@
               </i-switch>
             </div>
             <div class="row">
-              <span class="labelName">数据库：</span>
-              <Select v-model="data.dataBase" style="width:200px" @on-change="dbChange">
-                <Option v-for="item in dbList" :value="item.id" :key="item.id">{{ item.name }}</Option>
-              </Select>
-              <span class="tips" v-if="dbList.length == 0">
-                <a href="javascript:void(0);" @click="$router.push({ path: '/DBManage' })">添加数据库配置</a>
-              </span>
+              <div class="templateList" v-for="item,i in data.templateList" :key="i">
+                <div class="item">
+                  <div class="col"  style="width:94%;padding-bottom:10px;">
+                    <div class="row">
+                      <div class="col">
+                        <span style="padding-left: 24px;">模板：</span>
+                        <Select v-model="item.template" style="width:180px">
+                          <Option
+                            v-for="item in templateList"
+                            :value="item.fileName"
+                            :key="item.name"
+                            :disabled="templateShow(item.path)"
+                          >{{ item.name }}</Option>
+                        </Select>
+                      </div>
+                      <div class="col">
+                        <span class="labelName">文件名：</span>
+                        <Input v-model="item.fileName" style="width:200px;"></Input>
+                      </div>
+                    </div>
+                    <pathChoose title="输出目录" v-model="item.output" :width="480"></pathChoose>
+                  </div>
+                  <div class="col" style="width:6%;vertical-align: top;">
+                    <a class="delItem" href="javascript:void(0);" @click="delTemp(item.id)" v-if="data.templateList.length > 1">删除</a>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="row" v-if="showTable">
-              <Table
-                :columns="tableColumns"
-                :data="tableList"
-                height="300"
-                style="margin-left:100px;"
-                @on-select="selectHanlder"
-                @on-select-cancel="unselectHanlder"
-                @on-select-all="selectAllHanlder"
-                @on-select-all-cancel="unselectAllHanlder"
-              ></Table>
-            </div>
-            <div class="row" v-for="item,i in data.templateList" :key="i">
-              <div class="col">
-                <span class="labelName">模板：</span>
-                <Select v-model="item.template" style="width:200px">
-                  <Option
-                    v-for="item in templateList"
-                    :value="item.path"
-                    :key="item.name"
-                    :disabled="templateShow(item.path)"
-                  >{{ item.name }}</Option>
-                </Select>
-              </div>&nbsp;
-              <pathChoose class="col" title="输出目录" v-model="item.output"></pathChoose>&nbsp;&nbsp;
-              <Button type="error" @click="delTemp(item.id)" v-if="data.templateList.length > 1">删除</Button>
-            </div>
+
             <div class="row" style="padding-left:100px;">
               <span class="tips" v-if="templateList.length == 0">
                 <a
@@ -78,33 +77,40 @@
             </div>
             <Button class="add" @click="addTemp">添加</Button>
           </TabPane>
-          <TabPane label="数据源"></TabPane>
+          <TabPane label="数据源" name="db">
+            <DBManage ref="dbManage"></DBManage>
+          </TabPane>
+          <div slot="extra">
+            <Button
+              type="primary"
+              class="btn"
+              style="width:120px;margin-left:100px;"
+              @click="save"
+            >保存</Button>
+            <Button
+              type="error"
+              class="btn"
+              v-if="current.name != ''"
+              style="width:120px;"
+              @click="delItem"
+            >删除项目</Button>
+          </div>
         </Tabs>
-        <div class="row">
-          <Button type="primary" class="btn" style="width:200px;margin-left:100px;" @click="save">保存</Button>
-          <Button
-            type="error"
-            class="btn"
-            v-if="data.id>0"
-            style="width:200px;"
-            @click="delItem"
-          >删除项目</Button>
-        </div>
       </div>
     </Split>
   </div>
 </template>
 <script>
 import config from "@/libs/config";
-import pathChoose from "@/views/PathChoose";
+import pathChoose from "@/components/PathChoose";
+import DBManage from "@/components/DBManage";
 import DataBaseUtil from "@/libs/database";
 import Service from "@/libs/service";
-import { constants } from "crypto";
-import { type } from "os";
 
 export default {
   components: {
-    pathChoose
+    pathChoose,
+    DBManage
   },
   data() {
     return {
@@ -114,39 +120,25 @@ export default {
         name: "",
         path: ""
       },
+      currentTab: "project",
       data: {
-        id: 0,
         name: "",
         package: "",
         swagger: false,
         tables: [],
-        dataBase: 0,
+        dataBase: {
+          dbType: "mysql"
+        },
         templateList: [
           {
+            fileName: "",
             template: "",
             output: ""
           }
         ]
       },
       projectList: [],
-      tableColumns: [
-        {
-          type: "selection",
-          title: "编号",
-          width: 50
-        },
-        {
-          title: "表名",
-          key: "tableName"
-        },
-        {
-          title: "备注",
-          key: "comment"
-        }
-      ],
       templateList: [], //模板列表
-      dbList: [], //数据库列表
-      tableList: [], //表
       project: new Service()
     };
   },
@@ -165,9 +157,6 @@ export default {
   computed: {
     getHeight() {
       return this.height - 32;
-    },
-    showTable() {
-      return this.tableList.length > 0;
     }
   },
   methods: {
@@ -177,68 +166,36 @@ export default {
         this.projectList = data;
       });
     },
-    selectAllHanlder(selection) {
-      this.data.tables.splice(0, this.data.tables.length);
-      selection.forEach(item => {
-        this.data.tables.push(item.tableName);
-      });
-    },
-    unselectAllHanlder(selection) {
-      this.data.tables.splice(0, this.data.tables.length);
-    },
-    unselectHanlder(selection, row) {
-      this.data.tables.splice(
-        this.data.tables.findIndex(it => it === row.tableName),
-        1
-      );
-    },
-    selectHanlder(selection, row) {
-      this.data.tables.push(row.tableName);
-    },
-    dbChange() {
-      if (this.data.dataBase > 0) {
-        let db = this.dbList.find(it => it.id == this.data.dataBase);
-        if (db) {
-          const dbUtil = new DataBaseUtil(db.props);
-          dbUtil.listTable().then(result => {
-            result.forEach(item => {
-              this.tableList.push({
-                tableName: item.table_name,
-                comment: item.table_comment,
-                _checked:
-                  this.data.tables.findIndex(it => it === item.table_name) >= 0
-              });
-            });
-          });
-        }
-      }
-    },
     templateShow(path) {
       return (
         this.data.templateList.findIndex(item => item.template == path) >= 0
       );
     },
     itemClick(item) {
+      this.currentTab = "project";
       let list = document
         .getElementsByClassName("itemList")[0]
         .getElementsByTagName("li");
       for (let it of list) {
-        if (parseInt(it.getAttribute("id")) == item.id) {
+        if (it.getAttribute("id") == item.name) {
           it.className = "selected";
         } else {
           it.className = "";
         }
       }
       this.current = item;
-      this.project.getInfo(item.path).then(data => {
+      this.project.getInfo(this.$path.join(config.project, item.fileName)).then(data => {
         if (data) {
           this.data = data;
-          this.dbChange();
+          this.$nextTick(() => {
+            this.$refs.dbManage.setData(this.data.dataBase);
+          });
         }
       });
     },
     addTemp() {
       this.data.templateList.push({
+        fileName:"",
         template: "",
         output: ""
       });
@@ -259,10 +216,9 @@ export default {
       this.data = {
         id: 0,
         name: "",
-        tables: [],
         package: "",
         swagger: false,
-        dataBase: 0,
+        dataBase: {},
         templateList: [
           {
             template: 1,
@@ -270,7 +226,10 @@ export default {
           }
         ]
       };
-      this.tableList.splice(0, this.tableList.length);
+      this.currentTab = "project";
+      if (this.$refs.dbManage) {
+        this.$refs.dbManage.clear();
+      }
     },
     save() {
       if (this.data.name === "") {
@@ -281,20 +240,17 @@ export default {
         this.$error("请填写项目包名！");
         return;
       }
-      if (this.data.dataBase == 0) {
-        this.$error("请选择数据库！");
-        return;
-      }
-      if (this.data.tables.length == 0) {
-        this.$error("请选择数据表！");
-        return;
-      }
       for (let item of this.data.templateList) {
         if (item.template == 0 || item.output === "") {
           this.$error("请填写完整的模板信息！");
           return;
         }
       }
+      let dataBase = this.$refs.dbManage.getData();
+      if (!dataBase) {
+        return;
+      }
+      this.data.dataBase = dataBase;
       this.project.saveProject(this.current.name, this.data).then(data => {
         if (data) {
           this.$success("保存成功！");
@@ -307,7 +263,7 @@ export default {
     },
     delItem() {
       this.project
-        .delProject(this.current.name, this.current.path)
+        .delProject(this.current.name, this.$path.join(config.project, this.current.fileName))
         .then(data => {
           if (data) {
             this.$success("删除成功！");
@@ -317,6 +273,13 @@ export default {
             this.$error("删除失败！");
           }
         });
+    },
+    tabClickHandler(name) {
+      if (name === "db") {
+        this.$nextTick(() => {
+          this.$refs.dbManage.setData(this.data.dataBase);
+        });
+      }
     }
   }
 };
@@ -324,10 +287,32 @@ export default {
 <style scoped>
 .add {
   margin: 0 100px;
-  width: 200px;
+  width: 480px;
   border: 1px dashed #dcdee2;
 }
 .add:focus {
   box-shadow: none;
+}
+.templateList {
+  padding-left: 30px;
+}
+.templateList .item {
+  margin: 5px 0;
+  padding: 0 0 0 10px;
+  border: 1px dashed #8080804f;
+}
+.delItem{
+    display: inline-block;
+    height: 94px;
+    vertical-align: middle;
+    line-height: 94px;
+    width: 100%;
+    text-align: center;
+    background-color: #ed4014;
+    color: #FFFFFF;
+    margin: 1px -1px;
+}
+.delItem:hover{
+  background-color: #f16643;
 }
 </style>

@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Index from './views/Index.vue'
 import Main from './views/Main.vue'
-import DBManage from './views/DBManage.vue'
 import TemplateManage from './views/TemplateManage.vue'
 import ProjectManage from './views/ProjectManage'
 
@@ -21,10 +20,6 @@ export default new Router({
             path: "/Main",
             name: "Main",
             component: Main
-        }, {
-            path: "/DBManage",
-            name: "DBManage",
-            component: DBManage
         }, {
             path: "/TemplateManage",
             name: "TemplateManage",

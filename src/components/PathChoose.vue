@@ -1,7 +1,7 @@
 <template>
   <div>
-    <span v-if="showLabel" style="line-height: 32px;">{{title}}：</span>
-    <Input v-model="dataPath" class="chooseInput"></Input>
+    <span v-if="showLabel" :style="{lineHeigh:32+'px', width:labelWidth==0?'auto':labelWidth+'px', display:'inline-block', textAlign: 'right'}">{{title}}：</span>
+    <Input v-model="dataPath" class="chooseInput" :style="{width: width+'px'}"></Input>
     <Button class="chooseBtn" type="text" @click="selectPath">选择...</Button>
   </div>
 </template>
@@ -11,6 +11,14 @@ const { dialog } = require("electron").remote;
 export default {
   name: "PathChoose",
   props: {
+    width:{
+      type: Number,
+      default: 200
+    },
+    labelWidth:{
+      type: Number,
+      default: 0
+    },
     value: {
       type: String,
       default: ""

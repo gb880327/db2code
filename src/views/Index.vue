@@ -4,7 +4,6 @@
       <Header :style="{position: 'fixed', width: '100%', padding: '0 10px'}">
         <Button type="primary" shape="circle" icon="md-home" @click="gotoPath('/')"></Button>&nbsp;&nbsp;&nbsp;&nbsp;
         <Button type="primary" icon="ios-briefcase" @click="gotoPath('/ProjectManage')">项目管理</Button>&nbsp;&nbsp;&nbsp;&nbsp;
-        <!-- <Button type="primary" icon="ios-construct-outline" @click="gotoPath('/DBManage')">数据库配置</Button>&nbsp;&nbsp;&nbsp;&nbsp; -->
         <Button type="primary" icon="md-code-working" @click="gotoPath('/TemplateManage')">模板配置</Button>&nbsp;&nbsp;&nbsp;&nbsp;
       </Header>
       <Content :style="{margin: '75px 10px 0', background: '#fff', height: (height-116)+'px'}">
@@ -17,15 +16,11 @@
 
 <script>
 // @ is an alias to /src
-import pathChoose from "@/views/PathChoose";
 import config from "@/libs/config";
 const { dialog } = require("electron").remote;
 const fs = require("fs");
 
 export default {
-  components: {
-    pathChoose
-  },
   data() {
     return {
       height: document.documentElement.clientHeight

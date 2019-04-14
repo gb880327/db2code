@@ -3,19 +3,28 @@
     <div class="plane">
       <div class="content">
         <span>项目：</span>
-        <Select v-model="projectId" style="width:200px">
-          <Option v-for="item in projectList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+        <Select v-model="project.name" style="width:200px" @on-change="changeHandler">
+          <Option v-for="item in projectList" :value="item.name" :key="item.name">{{ item.name }}</Option>
         </Select>&nbsp;&nbsp;
         <Button
+          :loading="runing"
           type="primary"
           icon="md-arrow-dropright-circle"
-          :disabled="projectId == 0"
+          :disabled="projectInfo == null || tableList.length == 0"
           @click="exec"
-        >执行</Button>
+        >
+          <span v-if="!runing">执行</span>
+          <span v-else>运行中...</span>
+        </Button>
         <span class="tips" v-if="projectList.length == 0">
           <a href="javascript:void(0);" @click="gotoProject">添加项目</a>
         </span>
       </div>
+      <div class="row" v-if="showTable">
+        <div style="color:red;margin:2px 10px;">请选择需要执行的数据表！</div>
+        <TableList ref="tables" v-model="tableList"></TableList>
+      </div>
+      <div style="padding-left:10px;">运行结果：</div>
       <div class="result">
         <ul>
           <li v-for="item,index of results" :key="index">{{item}}</li>
@@ -25,39 +34,34 @@
   </div>
 </template>
 <script>
-import pathChoose from "@/views/PathChoose";
+import TableList from "@/components/TableList";
 import config from "@/libs/config";
-const { dialog } = require("electron").remote;
-import DataBaseUtil from "@/libs/database";
 import TemplateUtil from "@/libs/template";
+import Service from "@/libs/service";
 
 export default {
   components: {
-    pathChoose
+    TableList
   },
   data() {
     return {
       height: 0,
-      projectId: 0,
+      project: {
+        name: "",
+        path: ""
+      },
       projectList: [],
-      results: []
+      results: [],
+      service: new Service(),
+      tableList: [],
+      showTable: false,
+      projectInfo: null,
+      runing: false
     };
   },
   mounted() {
-    this.$listFileForFolder(config.getProjectPath()).then(data => {
-      if (data.length > 0) {
-        data.forEach(item => {
-          if (item.endsWith(".json")) {
-            this.$readForFile(config.getProjectPath() + "/" + item).then(
-              ret => {
-                if (ret) {
-                  this.projectList.push(JSON.parse(ret));
-                }
-              }
-            );
-          }
-        });
-      }
+    this.service.listProject().then(data => {
+      this.projectList = data;
     });
     this.$nextTick(() => {
       this.height = this.$parent.$el.clientHeight;
@@ -69,12 +73,29 @@ export default {
     }
   },
   methods: {
+    changeHandler() {
+      this.project = this.projectList.find(it => it.name == this.project.name);
+      if (this.project) {
+        this.service
+          .getInfo(this.$path.join(config.project, this.project.fileName))
+          .then(data => {
+            if (data) {
+              this.projectInfo = data;
+              this.showTable = true;
+              this.$nextTick(() => {
+                this.$refs.tables.setProps(data.dataBase.props);
+              });
+            }
+          });
+      }
+    },
     exec() {
+      this.runing = true;
       this.results = [];
-      let project = this.projectList.find(item => item.id == this.projectId);
       let templateUtil = new TemplateUtil();
-      templateUtil.genTemplate(project, item => {
+      templateUtil.genTemplate(this.projectInfo, this.tableList, item => {
         if (item == "done") {
+          this.runing = false;
           item = "执行完成！";
           this.$success("执行完成！");
         }
@@ -107,8 +128,10 @@ export default {
   background-color: #080606bd;
   color: #ffffff;
   margin: 10px;
-  height: 400px;
+  min-height: 50px;
+  max-height: 400px;
   font-size: 14px;
+  overflow-y: scroll;
 }
 .plane .result ul {
   list-style: none;

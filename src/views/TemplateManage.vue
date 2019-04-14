@@ -8,7 +8,7 @@
         </div>
         <div class="left-list" :style="{height: (getHeight - 38)+'px'}">
           <ul class="itemList">
-            <li v-for="item in templateList" :key="item.id" :id="item.id" @click="itemClick(item)">
+            <li v-for="item in templateList" :key="item.name" :id="item.name" @click="itemClick(item)">
               <span>{{item.name}}</span>
             </li>
           </ul>
@@ -80,14 +80,14 @@ export default {
         .getElementsByClassName("itemList")[0]
         .getElementsByTagName("li");
       for (let it of list) {
-        if (parseInt(it.getAttribute("id")) == item.id) {
+        if (parseInt(it.getAttribute("id")) == item.name) {
           it.className = "selected";
         } else {
           it.className = "";
         }
       }
       this.current = item;
-      this.service.getInfo(item.path, false).then(data=>{
+      this.service.getInfo(this.$path.join(config.template, item.fileName), false).then(data=>{
         if(data){
           this.name = item.name;
           this.aceEditor.setValue(data, -1);
@@ -129,7 +129,7 @@ export default {
     },
     delItem() {
       this.service
-        .delProject(this.current.name, this.current.path, 1)
+        .delProject(this.current.name, this.$path.join(config.template, this.current.fileName), 1)
         .then(data => {
           if (data) {
             this.$success("删除成功！");
