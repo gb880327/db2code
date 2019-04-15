@@ -54,7 +54,12 @@
                         </Select>
                       </div>
                       <div class="col">
-                        <span class="labelName">文件名：</span>
+                        <span class="labelName" style="min-width:60px;">包名：</span>
+                        {{data.package}}.&nbsp;
+                        <Input v-model="item.package" style="width:120px;"></Input>
+                      </div>
+                      <div class="col">
+                        <span class="labelName" style="min-width:60px;">文件名：</span>
                         <Input v-model="item.fileName" style="width:200px;"></Input>
                       </div>
                     </div>
@@ -132,6 +137,7 @@ export default {
         templateList: [
           {
             fileName: "",
+            package:"",
             template: "",
             output: ""
           }
@@ -196,6 +202,7 @@ export default {
     addTemp() {
       this.data.templateList.push({
         fileName:"",
+        package:"",
         template: "",
         output: ""
       });

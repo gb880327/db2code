@@ -20,6 +20,9 @@
           <Input v-model="name" placeholder="请输入模板名称..." style="width: 198px"/>&nbsp;&nbsp;&nbsp;&nbsp;
           <Button type="primary" class="btn" @click="save">保存</Button>
           <Button type="error" class="btn" v-if="showDelete" @click="delItem">删除</Button>
+          <a href="https://ejs.co/#docs" target="_blank">
+          <Icon type="ios-help-circle-outline" size="24" style="margin-left:5px;cursor: pointer;color: #2d8cf0;" />
+          </a>
         </div>
         <div class="ace-editor" ref="ace"></div>
       </div>
