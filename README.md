@@ -1,7 +1,12 @@
-# codegen
+# 运行和打包命令
 - npm run electron:serve
 - npm run electron:build
 
+# 技术清单
+- nodejs
+- ejs 模板生成
+- electron
+- electron-builder 打包工具
+- vuejs
+- iview
 # TODOLIST
-- v2.0 已项目为操作单位
-  项目管理-数据库配置-模板配置
