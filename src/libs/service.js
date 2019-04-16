@@ -19,6 +19,9 @@ class Service {
 
     listProject() {
         return new Promise((resolve, reject) => {
+            if (!fs.existsSync(config.project)) {
+                fs.mkdirSync(config.project);
+            }
             listFileForFolder(config.project).then(data => {
                 if (data) {
                     data = data.filter(it => it.endsWith('.json'));
@@ -36,6 +39,9 @@ class Service {
 
     listTemplate() {
         return new Promise((resolve, reject) => {
+            if (!fs.existsSync(config.template)) {
+                fs.mkdirSync(config.template);
+            }
             listFileForFolder(config.template).then(data => {
                 if (data) {
                     data = data.filter(it => it.endsWith(".ejs"));

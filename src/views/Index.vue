@@ -19,7 +19,6 @@
 <script>
 // @ is an alias to /src
 import config from "@/libs/config";
-const fs = require("fs");
 import Setting from "@/views/setting";
 
 export default {
@@ -32,7 +31,6 @@ export default {
     };
   },
   mounted() {
-    this.checkPath();
     window.addEventListener("resize", this.resizeHandler);
   },
   destroyed() {
@@ -47,29 +45,6 @@ export default {
       this.$nextTick(() => {
         this.$refs.view.height = this.height - 116;
       });
-    },
-    checkPath() {
-      if (!fs.existsSync(config.dataPath)) {
-        fs.mkdir(config.dataPath, err=>{
-          if (err) {
-            this.$error(err);
-          }
-        });
-      }
-      if (!fs.existsSync(config.template)) {
-        fs.mkdir(config.template, err => {
-          if (err) {
-            this.$error(err);
-          }
-        });
-      }
-      if (!fs.existsSync(config.project)) {
-        fs.mkdir(config.project, err => {
-          if (err) {
-            this.$error(err);
-          }
-        });
-      }
     }
   }
 };
