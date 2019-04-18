@@ -24,7 +24,7 @@
         "@vue/cli-plugin-babel": "^3.5.0",
         "@vue/cli-service": "^3.5.0",
         "ace-builds": "^1.4.3",
-        "electron": "^4.0.0",
+        "electron": "^4.1.4",
         "node-sass": "^4.9.0",
         "sass-loader": "^7.1.0",
         "vue-cli-plugin-electron-builder": "^1.2.0",
