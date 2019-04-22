@@ -38,6 +38,9 @@
               </i-switch>
             </div>
             <div class="row">
+              <pathChoose v-model="data.output" title="输出目录" :width="400" style="margin-left: 40px;"></pathChoose>
+            </div>
+            <div class="row">
               <div class="templateList" v-for="item,i in data.templateList" :key="i">
                 <div class="item">
                   <div class="col"  style="width:94%;padding-bottom:10px;">
@@ -63,7 +66,7 @@
                         <Input v-model="item.fileName" style="width:200px;"></Input>
                       </div>
                     </div>
-                    <pathChoose title="输出目录" v-model="item.output" :width="480"></pathChoose>
+                    <!-- <pathChoose title="输出目录" v-model="item.output" :width="480"></pathChoose> -->
                   </div>
                   <div class="col" style="width:6%;vertical-align: top;">
                     <a class="delItem" href="javascript:void(0);" @click="delTemp(item.id)" v-if="data.templateList.length > 1">删除</a>
@@ -129,6 +132,7 @@ export default {
       data: {
         name: "",
         package: "",
+        output: "",
         swagger: false,
         dataBase: {
           dbType: "mysql"
@@ -137,8 +141,7 @@ export default {
           {
             fileName: "",
             package:"",
-            template: "",
-            output: ""
+            template: ""
           }
         ]
       },
@@ -202,8 +205,7 @@ export default {
       this.data.templateList.push({
         fileName:"",
         package:"",
-        template: "",
-        output: ""
+        template: ""
       });
     },
     delTemp(path) {

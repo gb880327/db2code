@@ -68,8 +68,8 @@ class TemplateUtil {
                             callback(table + " 生成失败！");
                             isOver();
                         } else {
-                            let filePath = path.join(item.output, attrs[config.attrs.packageName].replace(/\./g, '/') + '/');
-                            filePath = path.join(filePath, attrs[config.attrs.entityName] + item.fileName);
+                            let filePath = path.join(props.output, attrs[config.attrs.packageName].replace(/\./g, '/') + '/');
+                            filePath = path.join(filePath, ejs.render(item.fileName, attrs));
                             if (!fs.existsSync(filePath)) {
                                 mkdirs(filePath);
                             }

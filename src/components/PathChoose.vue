@@ -1,7 +1,15 @@
 <template>
   <div>
-    <span v-if="showLabel" :style="{lineHeigh:32+'px', width:labelWidth==0?'auto':labelWidth+'px', display:'inline-block', textAlign: 'right'}">{{title}}：</span>
-    <Input v-model="dataPath" class="chooseInput" :style="{width: width+'px'}"></Input>
+    <span
+      v-if="showLabel"
+      :style="{lineHeigh:32+'px', width:labelWidth==0?'auto':labelWidth+'px', display:'inline-block', textAlign: 'right'}"
+    >{{title}}：</span>
+    <Input
+      v-model="dataPath"
+      class="chooseInput"
+      :style="{width: width+'px'}"
+      @on-change="changeHanlder"
+    ></Input>
     <Button class="chooseBtn" type="text" @click="selectPath">选择...</Button>
   </div>
 </template>
@@ -11,11 +19,11 @@ const { dialog } = require("electron").remote;
 export default {
   name: "PathChoose",
   props: {
-    width:{
+    width: {
       type: Number,
       default: 200
     },
-    labelWidth:{
+    labelWidth: {
       type: Number,
       default: 0
     },
@@ -23,9 +31,9 @@ export default {
       type: String,
       default: ""
     },
-    showLabel:{
-        type: Boolean,
-        default: true
+    showLabel: {
+      type: Boolean,
+      default: true
     },
     title: {
       type: String,
@@ -37,16 +45,20 @@ export default {
       dataPath: this.value
     };
   },
-  mounted(){
-      this.$watch("value",(n,o)=>{
-          this.dataPath = n;
-      });
+  mounted() {
+    this.$watch("value", (n, o) => {
+      this.dataPath = n;
+    });
   },
   model: {
     prop: "value",
     event: "update"
   },
   methods: {
+    changeHanlder(event) {
+      this.$emit("update", this.dataPath);
+      this.$emit("change", this.dataPath);
+    },
     selectPath() {
       let path = dialog.showOpenDialog({ properties: ["openDirectory"] });
       if (path && path.length > 0) {
@@ -59,10 +71,10 @@ export default {
 };
 </script>
 <style scoped>
-.chooseInput{
+.chooseInput {
   width: 300px;
 }
-.chooseBtn:focus{
+.chooseBtn:focus {
   box-shadow: none;
 }
 </style>
