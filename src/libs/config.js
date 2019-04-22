@@ -14,6 +14,7 @@ let config = {
     project: path.join(getBasePath(), 'project'),
     dbType: ["mysql"],
     attrs: {
+        basePackage: "basePackage",
         packageName: "packageName",
         imports: "imports",
         swagger: "swagger",

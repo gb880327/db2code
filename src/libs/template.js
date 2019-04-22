@@ -27,6 +27,7 @@ class TemplateUtil {
         return new Promise((resolve, reject) => {
             let attrs = {};
             attrs[config.attrs.packageName] = this.props.package;
+            attrs[config.attrs.basePackage] = this.props.package;
             attrs[config.attrs.swagger] = this.props.swagger;
             attrs[config.attrs.fields] = [];
             attrs[config.attrs.imports] = [];
