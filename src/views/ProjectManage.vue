@@ -130,7 +130,6 @@ export default {
         name: "",
         package: "",
         swagger: false,
-        tables: [],
         dataBase: {
           dbType: "mysql"
         },
@@ -248,7 +247,7 @@ export default {
         return;
       }
       for (let item of this.data.templateList) {
-        if (item.template == 0 || item.output === "") {
+        if (item.template === '' || item.output === "") {
           this.$error("请填写完整的模板信息！");
           return;
         }
