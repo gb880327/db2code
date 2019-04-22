@@ -39,7 +39,8 @@ class DataBaseUtil {
         });
         this.conn.connect((err) => {
             if (err) {
-                $this.$error(e);
+                console.log(err);
+                $this.$error(err);
             }
         });
     }
