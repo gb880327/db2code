@@ -22,7 +22,8 @@
           <Button type="error" class="btn" v-if="showDelete" @click="delItem">删除</Button>
           <a href="https://ejs.co/#docs" target="_blank">
           <Icon type="ios-help-circle-outline" size="24" style="margin-left:5px;cursor: pointer;color: #2d8cf0;" />
-          </a>
+          </a>&nbsp;&nbsp;&nbsp;&nbsp;
+          <helpTips></helpTips>
         </div>
         <div class="ace-editor" ref="ace"></div>
       </div>
@@ -34,8 +35,12 @@ import config from "@/libs/config";
 import ace from "ace-builds";
 import "ace-builds/webpack-resolver"; // 在 webpack 环境中使用必须要导入
 import Service from "@/libs/service";
+import helpTips from "@/components/HelpTips";
 
 export default {
+  components:{
+    helpTips
+  },
   data() {
     return {
       service: new Service(),

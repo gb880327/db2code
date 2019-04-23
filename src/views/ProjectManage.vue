@@ -25,6 +25,8 @@
             <div class="row">
               <span class="labelName">项目名称：</span>
               <Input v-model="data.name" placeholder="请输入项目名称..." style="width: 198px"/>
+              &nbsp;&nbsp;
+              <helpTips></helpTips>
             </div>
             <div class="row">
               <span class="labelName">项目包名：</span>
@@ -43,11 +45,11 @@
             <div class="row">
               <div class="templateList" v-for="item,i in data.templateList" :key="i">
                 <div class="item">
-                  <div class="col"  style="width:94%;padding-bottom:10px;">
+                  <div class="col"  style="width:94%;">
                     <div class="row">
                       <div class="col">
                         <span style="padding-left: 24px;">模板：</span>
-                        <Select v-model="item.template" style="width:180px">
+                        <Select v-model="item.template" style="width:180px" placement="top-start">
                           <Option
                             v-for="item in templateList"
                             :value="item.fileName"
@@ -114,11 +116,14 @@ import pathChoose from "@/components/PathChoose";
 import DBManage from "@/components/DBManage";
 import DataBaseUtil from "@/libs/database";
 import Service from "@/libs/service";
+import helpTips from "@/components/HelpTips";
+
 
 export default {
   components: {
     pathChoose,
-    DBManage
+    DBManage,
+    helpTips
   },
   data() {
     return {
@@ -311,9 +316,9 @@ export default {
 }
 .delItem{
     display: inline-block;
-    height: 94px;
+    height: 50px;
     vertical-align: middle;
-    line-height: 94px;
+    line-height: 50px;
     width: 100%;
     text-align: center;
     background-color: #ed4014;
