@@ -65,7 +65,7 @@ class TemplateUtil {
                     attrs[config.attrs.packageName] = attrs[config.attrs.packageName] + '.' + item.package;
                     ejs.renderFile(item.template, attrs, (err, str) => {
                         if (err) {
-                            callback(table + " 生成失败！");
+                            callback(table + " 生成失败: " + err);
                             isOver();
                         } else {
                             let filePath = path.join(props.output, attrs[config.attrs.packageName].replace(/\./g, '/') + '/');
