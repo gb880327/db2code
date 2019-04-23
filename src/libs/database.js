@@ -9,7 +9,7 @@ class DataBaseUtil {
 
     javaDataType = {
         'int': 'Integer',
-        'bigint': 'Integer',
+        'bigint': 'Long',
         'smallint': 'Integer',
         'mediumint': 'Integer',
         'varchar': 'String',
