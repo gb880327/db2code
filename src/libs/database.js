@@ -29,6 +29,7 @@ class DataBaseUtil {
     }
 
     constructor(props = {}) {
+        this.isUpper = false;
         this.props = props;
         this.conn = mysql.createConnection({
             host: props.host,
@@ -67,6 +68,9 @@ class DataBaseUtil {
                     $this.$error(error);
                     reject("查询失败！");
                 } else {
+                    if (result.length > 0) {
+                        this.isUpper = result[0]['TABLE_NAME']
+                    }
                     resolve(this.formatTableName(result));
                 }
             })
@@ -84,11 +88,11 @@ class DataBaseUtil {
                     let data = [];
                     result.forEach(item => {
                         data.push({
-                            columnName: item.column_name,
-                            fieldName: this.formatFieldName(item.column_name),
-                            type: this.javaDataType[item.data_type],
-                            comment: item.column_comment,
-                            pri: item.column_key === 'PRI'
+                            columnName: this.isUpper ? item.COLUMN_NAME : item.column_name,
+                            fieldName: this.formatFieldName(this.isUpper ? item.COLUMN_NAME : item.column_name),
+                            type: this.javaDataType[this.isUpper ? item.DATA_TYPE : item.data_type],
+                            comment: this.isUpper ? item.COLUMN_COMMENT : item.column_comment,
+                            pri: this.isUpper ? item.COLUMN_KEY : item.column_key === 'PRI'
                         });
                     });
                     resolve(data);
@@ -104,12 +108,13 @@ class DataBaseUtil {
     formatTableName(result) {
         let data = [];
         result.forEach(item => {
-            let str = this.props.prefix && this.props.prefix === "" ? item.table_name.replace(this.props.prefix + '_', '') : item.table_name;
+            let tableName = this.isUpper ? item.TABLE_NAME : item.table_name;
+            let str = this.props.prefix && this.props.prefix === "" ? tableName.replace(this.props.prefix + '_', '') : tableName;
             str = str.split('_');
             let dataItem = {
                 name: '',
-                table_name: item.table_name,
-                table_comment: item.table_comment
+                table_name: tableName,
+                table_comment: this.isUpper ? item.COLUMN_COMMENT : item.column_comment
             };
             str.forEach(it => {
                 dataItem.name += it.substr(0, 1).toUpperCase() + it.substr(1, it.length - 1).toLowerCase();
