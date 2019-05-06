@@ -110,7 +110,7 @@ class DataBaseUtil {
             let dataItem = {
                 name: '',
                 table_name: item.table_name,
-                table_comment: item.column_comment
+                table_comment: item.table_comment
             };
             str.forEach(it => {
                 dataItem.name += it.substr(0, 1).toUpperCase() + it.substr(1, it.length - 1).toLowerCase();
