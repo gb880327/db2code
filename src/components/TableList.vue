@@ -1,17 +1,14 @@
 <template>
-  <div>
     <Table
       :loading="loading"
       :columns="tableColumns"
       :data="tableList"
-      height="300"
       style="margin:0 10px;"
       @on-select="selectHanlder"
       @on-select-cancel="unselectHanlder"
       @on-select-all="selectAllHanlder"
       @on-select-all-cancel="unselectAllHanlder"
     ></Table>
-  </div>
 </template>
 <script>
 import DataBaseUtil from "@/libs/database";

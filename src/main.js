@@ -24,6 +24,8 @@ Vue.config.productionTip = false
 Vue.use(iView);
 
 Vue.prototype.$TEMPLATE = "template";
+Vue.prototype.$DATASOURCE = "datasorce";
+Vue.prototype.$PROJECT = "project";
 
 Vue.prototype.$genId = genId;
 Vue.prototype.$path = path;

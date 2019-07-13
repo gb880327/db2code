@@ -2,10 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Index from './views/Index.vue'
 import Main from './views/Main.vue'
-import TemplateManage from './views/TemplateManage.vue'
-import ProjectManage from './views/ProjectManage'
 
 import Templage from '@/views/template/index';
+import DataSources from "@/views/datasource/index";
+import Project from "@/views/project/index";
+import Setting from "@/views/setting/index";
 
 Vue.use(Router)
 
@@ -27,9 +28,17 @@ export default new Router({
             name: "TemplateManage",
             component: Templage
         }, {
+            path: "/DataSource",
+            name: "datasoruce",
+            component: DataSources
+        }, {
             path: "/ProjectManage",
             name: "ProjectManage",
-            component: ProjectManage
+            component: Project
+        }, {
+            path: "/Setting",
+            name: "Setting",
+            component: Setting
         }]
     }]
 })

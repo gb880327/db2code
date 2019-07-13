@@ -1,34 +1,37 @@
 <template>
   <div class="layout">
     <Layout>
-      <Header :style="{position: 'fixed', width: '100%', padding: '0 10px'}">
-        <Button type="primary" shape="circle" icon="md-home" @click="gotoPath('/')"></Button>&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button type="primary" icon="ios-briefcase" @click="gotoPath('/ProjectManage')">项目管理</Button>&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button type="primary" icon="md-code-working" @click="gotoPath('/TemplateManage')">模板配置</Button>&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button type="primary" icon="ios-cog" @click="$refs.setting.show()">系统设置</Button>&nbsp;&nbsp;&nbsp;&nbsp;
-      </Header>
-      <Content :style="{margin: '75px 10px 0', background: '#fff', height: (height-116)+'px'}">
+      <div class="header">
+        <span class="title">代码生成工具-2.0</span>
+      </div>
+      <Content :style="{margin: '55px 0px 0', background: '#fff', height: (height-96)+'px'}">
+        <Tabs @on-click="gotoPath" v-model="current">
+          <TabPane label="项目" icon="md-cube" name="ProjectManage"></TabPane>
+          <TabPane label="数据源" icon="ios-analytics" name="DataSource"></TabPane>
+          <TabPane label="模板" icon="ios-browsers-outline" name="TemplateManage"></TabPane>
+          <TabPane label="系统设置" icon="ios-browsers-outline" name="Setting"></TabPane>
+        </Tabs>
         <router-view ref="view"></router-view>
       </Content>
       <Footer class="layout-footer-center">2019 &copy; Rookie</Footer>
     </Layout>
-    <Setting ref="setting"></Setting>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import config from "@/libs/config";
-import Setting from "@/views/setting";
 
 export default {
-  components:{
-    Setting
-  },
   data() {
     return {
-      height: document.documentElement.clientHeight
+      height: document.documentElement.clientHeight,
+      current: ""
     };
+  },
+  created(){
+    this.current = this.$getDataForStr("currentPath");
+    this.current = this.current == null ? "ProjectManage" : this.current;
   },
   mounted() {
     window.addEventListener("resize", this.resizeHandler);
@@ -39,17 +42,41 @@ export default {
   methods: {
     gotoPath(path) {
       this.$router.push({ path: path });
+      this.$saveData("currentPath", path);
     },
     resizeHandler(event) {
       this.height = document.documentElement.clientHeight;
       this.$nextTick(() => {
-        this.$refs.view.height = this.height - 116;
+        this.$refs.view.height = this.height - 96;
       });
     }
   }
 };
 </script>
 <style>
+.title {
+  display: inline-block;
+  height: 40px;
+  padding-left: 40px;
+  margin-left: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-image: url(/img/logo.95452ff1.png);
+  background-size: 32px;
+  background-position: left 8px;
+  background-repeat: no-repeat;
+}
+.ivu-tabs-bar {
+  margin-bottom: 0;
+}
+.header {
+  position: fixed;
+  height: 50px;
+  line-height: 50px;
+  width: 100%;
+  background-color: #515a6e;
+}
 .layout {
   background: #f5f7f9;
   position: relative;
@@ -137,10 +164,10 @@ export default {
   width: 100%;
   font-weight: bold;
 }
-.tips{
-  padding-left:15px;
+.tips {
+  padding-left: 15px;
 }
-.tips a{
+.tips a {
   color: red;
 }
 </style>
