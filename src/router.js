@@ -5,6 +5,8 @@ import Main from './views/Main.vue'
 import TemplateManage from './views/TemplateManage.vue'
 import ProjectManage from './views/ProjectManage'
 
+import Templage from '@/views/template/index';
+
 Vue.use(Router)
 
 export default new Router({
@@ -23,7 +25,7 @@ export default new Router({
         }, {
             path: "/TemplateManage",
             name: "TemplateManage",
-            component: TemplateManage
+            component: Templage
         }, {
             path: "/ProjectManage",
             name: "ProjectManage",

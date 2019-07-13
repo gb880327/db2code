@@ -26,7 +26,7 @@ export const saveToFile = (fileName, data, checkExists = true) => {
                 error(err);
                 resolve(false);
             } else {
-                resolve(true);
+                resolve(fileName);
             }
         });
     });
@@ -142,3 +142,11 @@ export const dateFormat = (date, format) => {
         if (new RegExp("(" + k + ")").test(format)) format = format.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return format;
 };
+
+export const genId = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0,
+            v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}

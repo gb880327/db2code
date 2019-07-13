@@ -14,7 +14,8 @@ import {
     getDataForStr,
     saveToFile,
     readForFile,
-    listFileForFolder
+    listFileForFolder,
+    genId
 } from '@/libs/util';
 const path = require("path");
 
@@ -22,6 +23,9 @@ const path = require("path");
 Vue.config.productionTip = false
 Vue.use(iView);
 
+Vue.prototype.$TEMPLATE = "template";
+
+Vue.prototype.$genId = genId;
 Vue.prototype.$path = path;
 Vue.prototype.$success = success;
 Vue.prototype.$error = error;

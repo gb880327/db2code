@@ -104,6 +104,30 @@ class Service {
             });
         });
     }
+
+    saveTemplate(name, context) {
+        return new Promise((resolve, reject) => {
+            let filePath = path.join(config.template, name + '.ejs');
+            saveToFile(filePath, context, false).then(data => {
+                resolve(data);
+            });
+        })
+    }
+
+    delTemplate(path) {
+        return new Promise((resolve, reject) => {
+            if (fs.existsSync(path)) {
+                fs.unlink(path, err => {
+                    if (err) {
+                        error(err);
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                });
+            }
+        });
+    }
 }
 
 export default Service;
