@@ -5,7 +5,6 @@ const buffer = require("buffer").Buffer;
 import config from './config';
 import DataBaseUtil from "./database";
 import {
-    getDataForObject,
     readForFile,
     saveToFile,
     error,

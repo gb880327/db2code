@@ -63,7 +63,6 @@ export default {
     };
   },
   created() {
-    console.log(this.$genId());
     this.$nextTick(() => {
       this.onsuccess();
       this.height = this.$parent.$el.clientHeight;

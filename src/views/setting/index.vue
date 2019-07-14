@@ -1,12 +1,20 @@
 <template>
-  <div>
-    <div class="row" style="margin: 15px;">
-      <pathChoose v-model="dataPath" title="系统数据存储目录" :width="300"></pathChoose>
-    </div>
-    <div class="row">
-      <Button type="primary" @click="ok" style="width:300px;margin-left:122px;">保存</Button>
-    </div>
-  </div>
+  <Row>
+    <Col span="12">
+      <div class="row" style="margin: 15px;">
+        <pathChoose v-model="dataPath" title="系统数据存储目录" :width="300"></pathChoose>
+      </div>
+      <div class="row">
+        <Button type="primary" @click="ok" style="width:300px;margin-left:122px;">保存</Button>
+      </div>
+    </Col>
+    <Col span="12">
+      <div class="row">
+        <Button @click="importProfile" style="width:45%;">导入配置</Button> &nbsp;&nbsp;
+        <Button @click="exportProfile" style="width:45%;">导出配置</Button>
+      </div>
+    </Col>
+  </Row>
 </template>
 <script>
 const fs = require("fs");
@@ -22,7 +30,8 @@ export default {
     return {
       modal: false,
       dataPath: "",
-      orgPath: ""
+      orgPath: "",
+      disabled: false
     };
   },
   created() {
@@ -66,6 +75,10 @@ export default {
           location.reload();
         });
       }
+    },
+    importProfile(){},
+    exportProfile(){
+      
     }
   }
 };

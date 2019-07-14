@@ -17,7 +17,7 @@ export default {
       });
     }
     if (!fs.existsSync(config.template)) {
-      fs.mkdir(config.dataPath, err => {
+      fs.mkdir(config.template, err => {
         if (err) {
           this.$error(err);
         }
