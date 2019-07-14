@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from './views/Index.vue'
-import Main from './views/Main.vue'
 
 import Templage from '@/views/template/index';
 import DataSources from "@/views/datasource/index";
@@ -20,10 +19,6 @@ export default new Router({
         path: '/',
         component: Index,
         children: [{
-            path: "/Main",
-            name: "Main",
-            component: Main
-        }, {
             path: "/TemplateManage",
             name: "TemplateManage",
             component: Templage

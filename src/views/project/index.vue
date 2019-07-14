@@ -1,5 +1,5 @@
 <template>
-  <div :style="{height: getHeight+'px'}" >
+  <div :style="{height: getHeight+'px'}">
     <div class="left">
       <div class="add" @click="clear">
         <Icon type="ios-add" size="22" />
@@ -57,6 +57,14 @@
         </Col>
       </Row>
     </div>
+    <Modal v-model="resultModal" title="执行结果" :mask-closable="false" width="800" :closable="closable">
+      <div class="result">
+        <ul>
+          <li v-for="item,index of results" :key="index">{{item}}</li>
+        </ul>
+      </div>
+      <div slot="footer" style="padding:0;"></div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -65,6 +73,7 @@ import helpTips from "@/components/HelpTips";
 import pathChoose from "@/components/PathChoose";
 import TableList from "@/components/TableList";
 import java from "./type/java";
+import Service from "@/libs/service";
 
 export default {
   components: {
@@ -75,6 +84,10 @@ export default {
   },
   data() {
     return {
+      closable: false,
+      resultModal: false,
+      results: [],
+      service: new Service(),
       height: 0,
       langList: config.langType,
       dbList: [],
@@ -97,8 +110,14 @@ export default {
     getHeight() {
       return this.height;
     },
-    isExec(){
-        return this.name != "" && this.db != "" && this.output != "" && this.type != "";
+    isExec() {
+      return (
+        this.name != "" &&
+        this.db != "" &&
+        this.output != "" &&
+        this.type != "" &&
+        this.tableList.length > 0
+      );
     }
   },
   methods: {
@@ -124,7 +143,27 @@ export default {
         this.$refs.tables.setProps(item.props);
       }
     },
-    exec() {},
+    exec() {
+      let item = this.dbList.find(it => it.id === this.db);
+      let data = {
+        output: this.output,
+        type: this.type,
+        db: item.props,
+        props: this.$refs[this.type].getData(),
+        tableList: this.tableList
+      };
+      this.service.genTemplate(data, (item,isDown) => {
+        if (!this.resultModal) {
+          this.results = [];
+          this.resultModal = true;
+        }
+        this.results.push(item);
+        if (isDown) {
+          this.closable = true;
+          this.results.push("执行完成！");
+        }
+      });
+    },
     save() {
       if (this.name === "") {
         this.$error("请填写项目名称！");
@@ -227,5 +266,22 @@ export default {
   text-align: center;
   cursor: pointer;
   margin-top: 5px;
+}
+.result {
+  background-color: #080606bd;
+  color: #ffffff;
+  min-height: 350px;
+  max-height: 500px;
+  font-size: 14px;
+  overflow-y: scroll;
+}
+.result ul {
+  list-style: none;
+  margin: 0px;
+  padding: 5px 0 0 0;
+}
+.result ul li {
+  padding: 0px;
+  margin: 2px 0 2px 10px;
 }
 </style>

@@ -9,6 +9,8 @@
   </div>
 </template>
 <script>
+const fs = require("fs");
+const path = require("path");
 import config from "@/libs/config";
 import pathChoose from "@/components/PathChoose";
 
@@ -19,18 +21,51 @@ export default {
   data() {
     return {
       modal: false,
-      dataPath: ""
+      dataPath: "",
+      orgPath: ""
     };
   },
   created() {
     this.dataPath = config.dataPath;
+    this.orgPath = this.dataPath;
   },
   methods: {
     ok() {
-      localStorage.setItem("basePath", this.dataPath);
-      this.$success("保存成功！", () => {
-        location.reload();
-      });
+      if (this.dataPath != this.orgPath) {
+        this.$confirm(
+          "是否自动转移模板文件？",
+          () => {
+            let target = path.join(this.dataPath, "template");
+            if (!fs.existsSync(target)) {
+              fs.mkdir(target, err => {
+                if (err) {
+                  this.$error(err);
+                }
+              });
+            }
+            this.$listFileForFolder(config.template).then(res => {
+              res.forEach(it => {
+                fs.rename(
+                  path.join(config.template, it),
+                  path.join(target, it),
+                  err => {}
+                );
+              });
+              localStorage.setItem("basePath", this.dataPath);
+              location.reload();
+            });
+          },
+          () => {
+            localStorage.setItem("basePath", this.dataPath);
+            location.reload();
+          }
+        );
+      } else {
+        localStorage.setItem("basePath", this.dataPath);
+        this.$success("保存成功！", () => {
+          location.reload();
+        });
+      }
     }
   }
 };

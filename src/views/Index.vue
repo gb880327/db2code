@@ -9,7 +9,7 @@
           <TabPane label="项目" icon="md-cube" name="ProjectManage"></TabPane>
           <TabPane label="数据源" icon="ios-analytics" name="DataSource"></TabPane>
           <TabPane label="模板" icon="ios-browsers-outline" name="TemplateManage"></TabPane>
-          <TabPane label="系统设置" icon="ios-browsers-outline" name="Setting"></TabPane>
+          <TabPane label="系统设置" icon="ios-cog-outline" name="Setting"></TabPane>
         </Tabs>
         <router-view ref="view"></router-view>
       </Content>

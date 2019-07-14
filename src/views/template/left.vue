@@ -41,7 +41,7 @@ export default {
           name: item.name,
           id: item.id,
           group: item.type,
-          path: item.path
+          fileName: item.fileName
         });
       }
     },
@@ -96,7 +96,7 @@ export default {
           children.push({
             title: it.name,
             id: it.id,
-            path: it.path,
+            fileName: it.fileName,
             typeId: item.id,
             render: (h, { root, node, data }) => {
               return h(leftItem, {
@@ -105,7 +105,7 @@ export default {
                   value: {
                     id: data.id,
                     name: data.title,
-                    path: data.path,
+                    fileName: data.fileName,
                     type: data.typeId,
                     parent: false
                   }

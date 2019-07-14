@@ -50,7 +50,6 @@ export default {
         id: "",
         name: "",
         group: "",
-        path: "",
         fileName: ""
       },
       name: "",
@@ -64,11 +63,12 @@ export default {
     };
   },
   created() {
+    console.log(this.$genId());
     this.$nextTick(() => {
       this.onsuccess();
       this.height = this.$parent.$el.clientHeight;
       this.aceEditor = ace.edit(this.$refs.ace, {
-        maxLines: 40, // 最大行数，超过会自动出现滚动条
+        maxLines: 30, // 最大行数，超过会自动出现滚动条
         minLines: 30, // 最小行数，还未到最大行数时，编辑器会自动伸缩大小
         fontSize: 14, // 编辑器内字体大小
         theme: this.themePath, // 默认设置的主题
@@ -112,7 +112,7 @@ export default {
               this.templateList[index].template.push({
                 id: id,
                 name: this.name,
-                path: data
+                fileName: id.replace(/-/g, "")
               });
             } else {
               let oIndex = this.templateList.findIndex(
@@ -150,9 +150,9 @@ export default {
       this.current = data;
       this.name = data.name;
       this.group = data.group;
-      this.$readForFile(data.path).then(res => {
-        if (res) {
-          this.aceEditor.setValue(res, -1);
+      this.service.readTemplate(data.fileName).then(data=>{
+        if(data){
+          this.aceEditor.setValue(data, -1);
         }
       });
     }

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 <script>
@@ -10,6 +10,13 @@ const fs = require("fs");
 export default {
   created() {
     if (!fs.existsSync(config.dataPath)) {
+      fs.mkdir(config.dataPath, err => {
+        if (err) {
+          this.$error(err);
+        }
+      });
+    }
+    if (!fs.existsSync(config.template)) {
       fs.mkdir(config.dataPath, err => {
         if (err) {
           this.$error(err);

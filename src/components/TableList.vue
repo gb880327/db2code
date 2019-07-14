@@ -34,7 +34,7 @@ export default {
         {
           type: "selection",
           title: "编号",
-          width: 50
+          width: 45
         },
         {
           title: "表名",

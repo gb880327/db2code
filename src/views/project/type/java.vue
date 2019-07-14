@@ -22,9 +22,9 @@
                 <Select v-model="item.templateId" style="width:100px" placement="top-start">
                   <Option
                     v-for="tmp in templateList"
-                    :value="tmp.id"
+                    :value="tmp.fileName"
                     :key="tmp.name"
-                    :disabled="templateShow(tmp.id)"
+                    :disabled="templateShow(tmp.fileName)"
                   >{{ tmp.name }}</Option>
                 </Select>
               </div>
@@ -83,7 +83,7 @@ export default {
           this.templateList.push({
             id: it.id,
             name: it.name,
-            path: it.path
+            fileName: it.fileName
           });
         });
       });
