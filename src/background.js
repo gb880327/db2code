@@ -1,5 +1,10 @@
 'use strict'
-import { app, protocol, BrowserWindow, Menu } from 'electron'
+import {
+    app,
+    protocol,
+    BrowserWindow,
+    Menu
+} from 'electron'
 import {
     createProtocol,
     installVueDevtools
@@ -11,49 +16,90 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let win
 
 // Standard scheme must be registered before the app is ready
-protocol.registerStandardSchemes(['app'], { secure: true })
+protocol.registerStandardSchemes(['app'], {
+    secure: true
+})
 
 
 const template = [{
         label: 'Edit',
-        submenu: [
-            { role: 'undo' },
-            { role: 'redo' },
-            { type: 'separator' },
-            { role: 'cut' },
-            { role: 'copy' },
-            { role: 'paste' },
-            { role: 'pasteandmatchstyle' },
-            { role: 'delete' },
-            { role: 'selectall' }
+        submenu: [{
+                role: 'undo'
+            },
+            {
+                role: 'redo'
+            },
+            {
+                type: 'separator'
+            },
+            {
+                role: 'cut'
+            },
+            {
+                role: 'copy'
+            },
+            {
+                role: 'paste'
+            },
+            {
+                role: 'pasteandmatchstyle'
+            },
+            {
+                role: 'delete'
+            },
+            {
+                role: 'selectall'
+            }
         ]
     },
     {
         label: 'View',
-        submenu: [
-            { role: 'reload' },
-            { role: 'forcereload' },
-            { role: 'toggledevtools' }, // !! 这里加入打开调试工具, 如果你不希望打开请去掉这行
-            { type: 'separator' },
-            { role: 'resetzoom' },
-            { role: 'zoomin' },
-            { role: 'zoomout' },
-            { type: 'separator' },
-            { role: 'togglefullscreen' }
+        submenu: [{
+                role: 'reload'
+            },
+            {
+                role: 'forcereload'
+            },
+            {
+                role: 'toggledevtools'
+            }, // !! 这里加入打开调试工具, 如果你不希望打开请去掉这行
+            {
+                type: 'separator'
+            },
+            {
+                role: 'resetzoom'
+            },
+            {
+                role: 'zoomin'
+            },
+            {
+                role: 'zoomout'
+            },
+            {
+                type: 'separator'
+            },
+            {
+                role: 'togglefullscreen'
+            }
         ]
     },
     {
         role: 'window',
-        submenu: [
-            { role: 'minimize' },
-            { role: 'close' }
+        submenu: [{
+                role: 'minimize'
+            },
+            {
+                role: 'close'
+            }
         ]
     },
     {
         role: 'help',
         submenu: [{
             label: 'Learn More',
-            click() { require('electron').shell.openExternal('https://electronjs.org') }
+            click() {
+                require('electron').shell.openExternal('https://electronjs.org')
+            }
         }]
     }
 ]
@@ -61,35 +107,67 @@ const template = [{
 if (process.platform === 'darwin') {
     template.unshift({
         label: app.getName(),
-        submenu: [
-            { role: 'about' },
-            { type: 'separator' },
-            { role: 'services', submenu: [] },
-            { type: 'separator' },
-            { role: 'hide' },
-            { role: 'hideothers' },
-            { role: 'unhide' },
-            { type: 'separator' },
-            { role: 'quit' }
+        submenu: [{
+                role: 'about'
+            },
+            {
+                type: 'separator'
+            },
+            {
+                role: 'services',
+                submenu: []
+            },
+            {
+                type: 'separator'
+            },
+            {
+                role: 'hide'
+            },
+            {
+                role: 'hideothers'
+            },
+            {
+                role: 'unhide'
+            },
+            {
+                type: 'separator'
+            },
+            {
+                role: 'quit'
+            }
         ]
     })
 
     // Edit menu
-    template[1].submenu.push({ type: 'separator' }, {
+    template[1].submenu.push({
+        type: 'separator'
+    }, {
         label: 'Speech',
-        submenu: [
-            { role: 'startspeaking' },
-            { role: 'stopspeaking' }
+        submenu: [{
+                role: 'startspeaking'
+            },
+            {
+                role: 'stopspeaking'
+            }
         ]
     })
 
     // Window menu
-    template[3].submenu = [
-        { role: 'close' },
-        { role: 'minimize' },
-        { role: 'zoom' },
-        { type: 'separator' },
-        { role: 'front' }
+    template[3].submenu = [{
+            role: 'close'
+        },
+        {
+            role: 'minimize'
+        },
+        {
+            role: 'zoom'
+        },
+        {
+            type: 'separator'
+        },
+        {
+            role: 'front'
+        }
     ]
 }
 
@@ -101,12 +179,15 @@ function createWindow() {
     const size = electronScreen.getPrimaryDisplay().size
 
     // Create the browser window.
-    win = new BrowserWindow({ width: size.width, height: size.height })
+    win = new BrowserWindow({
+            width: size.width,
+            height: size.height
+        })
         // win.webContents.openDevTools();
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
         win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-            // if (!process.env.IS_TEST) win.webContents.openDevTools()
+        if (!process.env.IS_TEST) win.webContents.openDevTools()
     } else {
         createProtocol('app')
             // Load the index.html when not in development
