@@ -10,6 +10,10 @@ Vue.use(Router)
 export default new Router({
     mode: "hash",
     routes: [{
+        path: "/",
+        redirect: "/ProjectManage",
+        name: "Index"
+    }, {
         path: "/TemplateManage",
         name: "TemplateManage",
         component: Templage
