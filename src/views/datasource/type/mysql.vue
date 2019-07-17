@@ -33,7 +33,7 @@ export default {
     return {
       vailHost: true,
       host: "localhost",
-      port: 3360,
+      port: 3306,
       dbName: "",
       userName: "root",
       passWord: "",

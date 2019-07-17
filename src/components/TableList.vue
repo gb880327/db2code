@@ -1,14 +1,15 @@
 <template>
-    <Table
-      :loading="loading"
-      :columns="tableColumns"
-      :data="tableList"
-      style="margin:0 10px;"
-      @on-select="selectHanlder"
-      @on-select-cancel="unselectHanlder"
-      @on-select-all="selectAllHanlder"
-      @on-select-all-cancel="unselectAllHanlder"
-    ></Table>
+  <Table
+    :loading="loading"
+    :columns="tableColumns"
+    :data="tableList"
+    style="margin:0 10px;"
+    :height="600"
+    @on-select="selectHanlder"
+    @on-select-cancel="unselectHanlder"
+    @on-select-all="selectAllHanlder"
+    @on-select-all-cancel="unselectAllHanlder"
+  ></Table>
 </template>
 <script>
 import DataBaseUtil from "@/libs/database";
@@ -62,6 +63,8 @@ export default {
               _checked: this.tables.findIndex(it => it === item.table_name) >= 0
             });
           });
+          this.loading = false;
+        },(err)=>{
           this.loading = false;
         });
       }
