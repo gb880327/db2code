@@ -49,6 +49,7 @@ export default {
     }
     this.current = this.$getDataForStr("currentPath");
     this.current = this.current == null ? "/ProjectManage" : this.current;
+    this.gotoPath(this.current);
   },
   mounted() {
     window.addEventListener("resize", this.resizeHandler);

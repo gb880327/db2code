@@ -38,6 +38,7 @@ import ace from "ace-builds";
 import "ace-builds/webpack-resolver"; // 在 webpack 环境中使用必须要导入
 import type from "./type";
 import Service from "@/libs/service";
+const path = require("path");
 
 export default {
   components: {
@@ -142,7 +143,9 @@ export default {
       this.$refs.leftTree.load();
     },
     importDemo(){
-      this.$readForFile("build/template/template.ejs").then((data)=>{
+      let isDevelopment = process.env.NODE_ENV !== 'production';
+      let url = isDevelopment ? "build/template/" : path.resolve(__dirname, '..') + "/template/";
+      this.$readForFile(url + 'template.ejs').then((data)=>{
         if(data){
           this.aceEditor.setValue(data, -1);
         }

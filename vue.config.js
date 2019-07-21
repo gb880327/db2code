@@ -7,6 +7,10 @@ module.exports = {
             // List them all here so that VCP Electron Builder can find them
             nodeModulesPath: ['./node_modules'],
             builderOptions: {
+                extraResources: [{
+                    from: "build/template",
+                    to: "template"
+                }],
                 mac: {
                     target: 'dmg',
                     icon: 'build/icons/logo.icns',
