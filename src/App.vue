@@ -5,7 +5,7 @@
         <div class="header">
           <span class="title">代码生成工具-2.0</span>
         </div>
-        <Content :style="{margin: '55px 0px 0', background: '#fff', height: (height-96)+'px'}">
+        <Content :style="{background: '#fff', height: (height-120)+'px'}">
           <Tabs @on-click="gotoPath" v-model="current">
             <TabPane label="项目" icon="md-cube" name="/ProjectManage"></TabPane>
             <TabPane label="数据源" icon="ios-analytics" name="/DataSource"></TabPane>
@@ -14,7 +14,9 @@
           </Tabs>
           <router-view ref="view"></router-view>
         </Content>
-        <Footer class="layout-footer-center">2019 &copy; Rookie</Footer>
+        <Footer>
+          <div class="layout-footer-center">2019 &copy; Rookie</div>
+        </Footer>
       </Layout>
     </div>
   </div>
@@ -87,16 +89,17 @@ export default {
   margin-bottom: 0;
 }
 .header {
-  position: fixed;
+  /* position: fixed; */
   height: 50px;
   line-height: 50px;
   width: 100%;
+  border-radius: 0;
   background-color: #515a6e;
 }
 .layout {
   background: #f5f7f9;
   position: relative;
-  border-radius: 4px;
+  /* border-radius: 4px; */
   overflow: hidden;
 }
 .menu {
@@ -105,7 +108,6 @@ export default {
 }
 .layout-footer-center {
   text-align: center;
-  padding: 10px 0 10px 0;
 }
 .content {
   border-top: 1px solid #dcdee2;

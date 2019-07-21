@@ -4,7 +4,7 @@
     :columns="tableColumns"
     :data="tableList"
     style="margin:0 10px;"
-    :height="600"
+    :max-height="560"
     @on-select="selectHanlder"
     @on-select-cancel="unselectHanlder"
     @on-select-all="selectAllHanlder"
@@ -51,6 +51,9 @@ export default {
     };
   },
   methods: {
+    clear(){
+      this.tableList = [];
+    },
     setProps(props) {
       if (props && props != null) {
         let dbUtil = new DataBaseUtil(props);

@@ -46,8 +46,11 @@
             <Select v-model="type" style="width:200px">
               <Option v-for="item in langList" :value="item" :key="item">{{ item }}</Option>
             </Select>
+            &nbsp;&nbsp;
+            Tips: <span style="color:red;">general为通用设置</span>
           </div>
           <java ref="java" v-if="type==='java'"></java>
+          <general ref="general" v-else-if="type === 'general'"></general>
         </Col>
         <Col span="8">
           <div style="margin: 0 10px 10px 10px;">
@@ -80,6 +83,7 @@ import helpTips from "@/components/HelpTips";
 import pathChoose from "@/components/PathChoose";
 import TableList from "@/components/TableList";
 import java from "./type/java";
+import general from "./type/general";
 import Service from "@/libs/service";
 
 export default {
@@ -87,7 +91,8 @@ export default {
     helpTips,
     pathChoose,
     TableList,
-    java
+    java,
+    general
   },
   data() {
     return {
@@ -132,6 +137,7 @@ export default {
       if (this.type != "") {
         this.$refs[this.type].clear();
       }
+      this.$refs.tables.clear();
       this.name = "";
       this.db = "";
       this.output = "";

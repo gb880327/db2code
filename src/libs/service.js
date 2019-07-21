@@ -75,7 +75,6 @@ class Service {
         return new Promise((resolve, reject) => {
             let attrs = {};
             attrs[config.attrs.fields] = [];
-            attrs[config.attrs.imports] = [];
             attrs[config.attrs.date] = dateFormat(new Date(), "yyyy-MM-dd hh:mm");
             this.dbUtil.tableInfo(tableName).then(data => {
                 attrs[config.attrs.entityName] = data.name;
@@ -96,36 +95,44 @@ class Service {
     genTemplate(data, callback) {
         this.callback = callback;
         this.dbUtil = new DataBaseUtil(data.db);
-        if (data.type === "java") {
-            this.genJavaFile(data.props, data.tableList, data.output);
-        }
-    }
 
-    genJavaFile(props, tables, output) {
-        let templates = props.template;
-        this.total = templates.length * tables.length;
+        let templates = data.props.template;
+        this.total = templates.length * data.tableList.length;
         this.count = 0;
         templates = templates.filter(it => it.checked);
         if (this.total == 0) {
             return;
         }
         templates.forEach(item => {
-            tables.forEach(table => {
+            data.tableList.forEach(table => {
                 this.getAttrs(table).then(attrs => {
-                    attrs[config.attrs.packageName] = props.package;
-                    if (item.package != "") {
-                        attrs[config.attrs.packageName] = attrs[config.attrs.packageName] + '.' + item.package;
+                    if (data.type === 'general') {
+                        this.genGeneralFile(item, table, attrs, data.output);
+                    } else if (data.type === "java") {
+                        this.genJavaFile(data.props, item, table, attrs, data.output);
                     }
-                    attrs[config.attrs.basePackage] = props.package;
-                    attrs[config.attrs.swagger] = props.swagger;
-                    if (attrs[config.attrs.fields].findIndex(it => it.type === "Date") >= 0) {
-                        attrs[config.attrs.imports].push("java.util.Date");
-                    }
-                    let filePath = path.join(output, attrs[config.attrs.packageName].replace(/\./g, '/') + '/');
-                    this.renderFile(table, item.templateId, filePath, item.fileName, attrs);
                 });
             });
         });
+    }
+    genGeneralFile(item, table, attrs, output) {
+        console.log(attrs);
+        let filePath = path.join(output, ejs.render(item.fileDir, attrs));
+        this.renderFile(table, item.templateId, filePath, item.fileName, attrs);
+    }
+    genJavaFile(props, item, table, attrs, output) {
+        attrs[config.attrs.imports] = [];
+        attrs[config.attrs.packageName] = props.package;
+        if (item.package != "") {
+            attrs[config.attrs.packageName] = attrs[config.attrs.packageName] + '.' + item.package;
+        }
+        attrs[config.attrs.basePackage] = props.package;
+        attrs[config.attrs.swagger] = props.swagger;
+        if (attrs[config.attrs.fields].findIndex(it => it.type === "Date") >= 0) {
+            attrs[config.attrs.imports].push("java.util.Date");
+        }
+        let filePath = path.join(output, attrs[config.attrs.packageName].replace(/\./g, '/') + '/');
+        this.renderFile(table, item.templateId, filePath, item.fileName, attrs);
     }
     renderFile(table, template, filePath, fileName, attrs) {
         ejs.renderFile(template, attrs, (err, str) => {

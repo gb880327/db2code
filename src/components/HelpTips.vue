@@ -3,10 +3,10 @@
     <a href="javascript:void(0);">可用变量</a>
     <div slot="content">
       <ul class="helpTips">
-        <li>basePackage - 基础包名</li>
-        <li>packageName - 包名</li>
-        <li>imports - 需要导入的包</li>
-        <li>swagger - 是否启用swagger</li>
+        <li>basePackage - 基础包名 ( java )</li>
+        <li>packageName - 包名 ( java )</li>
+        <li>imports - 需要导入的包 ( java )</li>
+        <li>swagger - 是否启用swagger ( java )</li>
         <li>entityName - 类名</li>
         <li>tableName - 表名</li>
         <li>remark - 表备注信息</li>

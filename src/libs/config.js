@@ -18,7 +18,7 @@ let config = {
     template: path.join(getBasePath(), 'template'),
     tmp: path.join(getBasePath(), "tmp"),
     dbType: ["mysql"],
-    langType: ["java"],
+    langType: ["general", "java"],
     attrs: {
         basePackage: "basePackage",
         packageName: "packageName",
