@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="add" @click="add">
-      <Icon type="ios-add" size="22"/>
+      <Icon type="ios-add" size="22" />
     </div>
     <Tree :data="data"></Tree>
   </div>
@@ -30,13 +30,11 @@ export default {
     this.load();
   },
   methods: {
-    add(){
+    add() {
       this.$parent.clean();
     },
     onselect(item) {
-      if (item.parent) {
-        this.$parent.clean();
-      } else {
+      if (!item.parent) {
         this.$parent.edit({
           name: item.name,
           id: item.id,

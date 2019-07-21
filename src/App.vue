@@ -85,9 +85,6 @@ export default {
   background-position: left 8px;
   background-repeat: no-repeat;
 }
-.ivu-tabs-bar {
-  margin-bottom: 0;
-}
 .header {
   /* position: fixed; */
   height: 50px;

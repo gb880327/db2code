@@ -1,0 +1,51 @@
+package <%= packageName %>;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+<%_ imports.forEach(imp=>{ _%>
+<%_ if (imp != 'java.util.Date'){ _%>
+import <%= imp %>;
+<%_}_%>
+<%_ }); _%>
+<%_ if (swagger){ _%>
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+<%_ } _%>
+
+
+/**
+ * @author Rookie
+ * @ClassName: <%= entityName %>
+ * @Description: <%= remark %>
+ * @date <%= date %>
+ * @Version 1.0
+ */
+<%_ if (swagger){ _%>
+@ApiModel(value = "<%= entityName %>",description = "<%= remark %>")
+<%_ } _%>
+@TableName(value = "<%= tableName %>")
+@Data
+@EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
+@NoArgsConstructor
+public class <%= entityName %>DO extends BaseDO{
+
+<% fields.forEach(attr=>{ %>
+<%_ if (attr.fieldName != 'id' && attr.fieldName != 'gmtCreate' && attr.fieldName != 'gmtModified'){ _%>
+   <%_ if (swagger){ _%>
+   @ApiModelProperty(value = "<%= attr.comment %>")
+   <%_ } _%>
+   @TableField("<%= attr.columnName %>")
+   private <%= attr.type %> <%= attr.fieldName %>;
+<%_ } _%>
+<% }); %>
+
+   @Override
+   public String toString(){
+      return "<%=entityName%>: "<%_ fields.forEach((attr,i)=>{ _%> + "<%= attr.fieldName %>=" + this.<%= attr.fieldName %><%_ if(i < fields.length - 1){ _%>+","<%_ } _%><%_ }) _%>;
+   }
+}

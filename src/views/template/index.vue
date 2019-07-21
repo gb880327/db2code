@@ -22,6 +22,8 @@
           />
         </a>&nbsp;&nbsp;
         <helpTips></helpTips>
+        &nbsp;&nbsp;
+        <a href="javascript:void(0);" @click="importDemo">导入模板示例代码</a>
       </div>
       <div class="ace-editor" ref="ace" style="margin-top:10px;"></div>
     </div>
@@ -138,6 +140,13 @@ export default {
       this.templateList = this.$getDataForObj(this.$TEMPLATE);
       this.templateList = this.templateList == null ? [] : this.templateList;
       this.$refs.leftTree.load();
+    },
+    importDemo(){
+      this.$readForFile("build/template/template.ejs").then((data)=>{
+        if(data){
+          this.aceEditor.setValue(data, -1);
+        }
+      });
     },
     clean() {
       this.current = { id: "", name: "", group: "", path: "" };

@@ -10,5 +10,3 @@
 - vuejs
 - iview
 # TODOLIST
-- 导入导出配置
-- 项目通用配置
