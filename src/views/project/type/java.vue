@@ -99,7 +99,7 @@ export default {
         checked: true,
         fileName: "",
         package: "",
-        tempPath: ""
+        templateId: ""
       });
     },
     getData() {
@@ -108,7 +108,7 @@ export default {
         return;
       }
       for (let item of this.template) {
-        if (item.tempPath === "" || item.fileName === "") {
+        if (item.templateId === "" || item.fileName === "") {
           this.$error("请填写完整的模板信息！");
           return;
         }

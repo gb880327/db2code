@@ -35,7 +35,8 @@
             <span class="labelName">数据源：</span>
             <Select v-model="db" style="width:200px" @on-change="dbChange">
               <Option v-for="item in dbList" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
+            </Select>&nbsp;&nbsp;
+            <a href="javascript:void(0);" @click="refresh">刷新</a>
           </div>
           <div class="row">
             <pathChoose v-model="output" title="输出目录" :width="300" style="margin-left: 40px;"></pathChoose>
@@ -57,7 +58,13 @@
         </Col>
       </Row>
     </div>
-    <Modal v-model="resultModal" title="执行结果" :mask-closable="false" width="800" :closable="closable">
+    <Modal
+      v-model="resultModal"
+      title="执行结果"
+      :mask-closable="false"
+      width="800"
+      :closable="closable"
+    >
       <div class="result">
         <ul>
           <li v-for="item,index of results" :key="index">{{item}}</li>
@@ -143,6 +150,14 @@ export default {
         this.$refs.tables.setProps(item.props);
       }
     },
+    refresh() {
+      if (this.db != "") {
+        let item = this.dbList.find(it => it.id === this.db);
+        if (item) {
+          this.$refs.tables.setProps(item.props);
+        }
+      }
+    },
     exec() {
       let item = this.dbList.find(it => it.id === this.db);
       let data = {
@@ -152,7 +167,7 @@ export default {
         props: this.$refs[this.type].getData(),
         tableList: this.tableList
       };
-      this.service.genTemplate(data, (item,isDown) => {
+      this.service.genTemplate(data, (item, isDown) => {
         if (!this.resultModal) {
           this.results = [];
           this.resultModal = true;
@@ -186,13 +201,17 @@ export default {
         let index = this.projectList.findIndex(it => it.id === this.id);
         this.projectList.splice(index, 1);
       }
+      let data = this.$refs[this.type].getData();
+      if(!data){
+        return;
+      }
       let item = {
         id: id,
         name: this.name,
         db: this.db,
         output: this.output,
         type: this.type,
-        props: this.$refs[this.type].getData()
+        props: data
       };
       this.projectList.push(item);
       this.$saveData(this.$PROJECT, this.projectList);
