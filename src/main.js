@@ -18,14 +18,15 @@ import {
     genId
 } from '@/libs/util';
 const path = require("path");
+import config from '@/libs/config';
 
 
 Vue.config.productionTip = false
 Vue.use(iView);
 
-Vue.prototype.$TEMPLATE = "template";
-Vue.prototype.$DATASOURCE = "datasorce";
-Vue.prototype.$PROJECT = "project";
+Vue.prototype.$TEMPLATE = config.storePath.template;
+Vue.prototype.$DATASOURCE = config.storePath.datasource;
+Vue.prototype.$PROJECT = config.storePath.project;
 
 Vue.prototype.$genId = genId;
 Vue.prototype.$path = path;

@@ -12,6 +12,7 @@
     },
     "main": "background.js",
     "dependencies": {
+        "adm-zip": "^0.4.13",
         "core-js": "^2.6.5",
         "ejs": "^2.6.1",
         "iview": "^3.3.3",

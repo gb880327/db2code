@@ -38,6 +38,10 @@ export default {
     title: {
       type: String,
       default: "系统配置保存路径"
+    },
+    file: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -60,7 +64,9 @@ export default {
       this.$emit("change", this.dataPath);
     },
     selectPath() {
-      let path = dialog.showOpenDialog({ properties: ["openDirectory"] });
+      let path = dialog.showOpenDialog({
+        properties: [this.file ? "openFile" : "openDirectory"]
+      });
       if (path && path.length > 0) {
         this.dataPath = path[0];
         this.$emit("update", this.dataPath);

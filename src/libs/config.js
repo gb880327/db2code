@@ -9,10 +9,13 @@ const getBasePath = () => {
 };
 
 let config = {
-    github: "https://github.com/gb880327/DB2CodeTemplate/archive/master.zip",
+    storePath: {
+        template: "template",
+        datasource: "datasource",
+        project: "project"
+    },
     dataPath: getBasePath(),
     template: path.join(getBasePath(), 'template'),
-    project: path.join(getBasePath(), 'project'),
     tmp: path.join(getBasePath(), "tmp"),
     dbType: ["mysql"],
     langType: ["java"],
