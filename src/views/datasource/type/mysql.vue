@@ -2,7 +2,7 @@
   <div>
     <div class="row">
       <span class="labelName">服务器地址：</span>
-      <Input v-model="host" placeholder="请输入服务器地址..." style="width: 198px" @on-blur="blurHanlder"/>
+      <Input v-model="host" placeholder="请输入服务器地址..." style="width: 198px" />
     </div>
     <div class="row">
       <span class="labelName">服务器端口：</span>

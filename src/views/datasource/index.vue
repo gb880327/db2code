@@ -95,6 +95,10 @@ export default {
         return;
       }
       let props = this.$refs[this.type].getData();
+      if(!props || props == null){
+        this.$error("数据库配置为空，保存失败！");
+        return;
+      }
       let item = {
         id: this.id === "" ? this.$genId() : this.id,
         name: this.name,

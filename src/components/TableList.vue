@@ -56,6 +56,7 @@ export default {
     },
     setProps(props) {
       if (props && props != null) {
+        this.clear();
         let dbUtil = new DataBaseUtil(props);
         this.loading = true;
         dbUtil.listTable().then(result => {

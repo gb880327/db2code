@@ -97,9 +97,9 @@ class Service {
         this.dbUtil = new DataBaseUtil(data.db);
 
         let templates = data.props.template;
-        this.total = templates.length * data.tableList.length;
         this.count = 0;
         templates = templates.filter(it => it.checked);
+        this.total = templates.length * data.tableList.length;
         if (this.total == 0) {
             return;
         }
@@ -116,7 +116,6 @@ class Service {
         });
     }
     genGeneralFile(item, table, attrs, output) {
-        console.log(attrs);
         let filePath = path.join(output, ejs.render(item.fileDir, attrs));
         this.renderFile(table, item.templateId, filePath, item.fileName, attrs);
     }
