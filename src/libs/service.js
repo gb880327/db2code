@@ -146,7 +146,7 @@ class Service {
                 saveToFile(filePath, str, false).then(ret => {
                     this.count += 1;
                     if (ret) {
-                        this.callback(table + " : " + filePath + " 生成成功！", this.count == this.total);
+                        this.callback(filePath + " 生成成功！", this.count == this.total);
                     } else {
                         this.callback(table + " 生成失败！", this.count == this.total);
                     }

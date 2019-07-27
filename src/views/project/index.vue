@@ -65,7 +65,7 @@
       v-model="resultModal"
       title="执行结果"
       :mask-closable="false"
-      width="800"
+      width="1000"
       :closable="closable"
     >
       <div class="result">
