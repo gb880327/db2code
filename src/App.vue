@@ -50,7 +50,7 @@ export default {
       });
     }
     this.current = this.$getDataForStr("currentPath");
-    this.current = this.current == null ? "/ProjectManage" : this.current;
+    this.current = this.current == null || this.current.startsWith('/') ? "project" : this.current;
     this.gotoPath(this.current);
   },
   mounted() {
