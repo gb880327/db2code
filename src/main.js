@@ -19,7 +19,15 @@ import {
 } from '@/libs/util';
 const path = require("path");
 import config from '@/libs/config';
+import project from '@/views/project/index';
+import setting from '@/views/setting/index';
+import template from '@/views/template/index';
+import dataSource from '@/views/datasource/index';
 
+Vue.component('dataSource', dataSource);
+Vue.component('project', project);
+Vue.component('setting', setting);
+Vue.component('templateManage', template);
 
 Vue.config.productionTip = false
 Vue.use(iView);
@@ -44,7 +52,7 @@ Vue.prototype.$listFileForFolder = listFileForFolder;
 
 
 const vue = new Vue({
-    router,
+    // router,
     render: h => h(App)
 }).$mount('#app');
 export default vue;

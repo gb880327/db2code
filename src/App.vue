@@ -7,12 +7,14 @@
         </div>
         <Content :style="{background: '#fff', height: (height-120)+'px'}">
           <Tabs @on-click="gotoPath" v-model="current">
-            <TabPane label="项目" icon="md-cube" name="/ProjectManage"></TabPane>
-            <TabPane label="数据源" icon="ios-analytics" name="/DataSource"></TabPane>
-            <TabPane label="模板" icon="ios-browsers-outline" name="/TemplateManage"></TabPane>
-            <TabPane label="系统设置" icon="ios-cog-outline" name="/Setting"></TabPane>
+            <TabPane label="项目" icon="md-cube" name="project"></TabPane>
+            <TabPane label="数据源" icon="ios-analytics" name="dataSource"></TabPane>
+            <TabPane label="模板" icon="ios-browsers-outline" name="templateManage"></TabPane>
+            <TabPane label="系统设置" icon="ios-cog-outline" name="setting"></TabPane>
           </Tabs>
-          <router-view ref="view"></router-view>
+          <keep-alive>
+            <component v-bind:is="current"></component>
+          </keep-alive>
         </Content>
         <Footer>
           <div class="layout-footer-center">2019 &copy; Rookie</div>
@@ -29,7 +31,7 @@ export default {
   data() {
     return {
       height: document.documentElement.clientHeight,
-      current: ""
+      current: "project"
     };
   },
   created() {
@@ -59,7 +61,7 @@ export default {
   },
   methods: {
     gotoPath(path) {
-      this.$router.push({ path: path });
+      this.current = path;
       this.$saveData("currentPath", path);
     },
     resizeHandler(event) {
