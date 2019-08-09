@@ -13,7 +13,7 @@
             <TabPane label="系统设置" icon="ios-cog-outline" name="setting"></TabPane>
           </Tabs>
           <keep-alive>
-            <component v-bind:is="current"></component>
+            <component ref="view" v-bind:is="current"></component>
           </keep-alive>
         </Content>
         <Footer>
