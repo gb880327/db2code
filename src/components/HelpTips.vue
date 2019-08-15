@@ -9,6 +9,8 @@
         <li>swagger - 是否启用swagger ( java )</li>
         <li>entityName - 类名</li>
         <li>tableName - 表名</li>
+        <li>primaryKey - 主键</li>
+        <li>priType - 主键数据类型</li>
         <li>remark - 表备注信息</li>
         <li>date - 当前日期(yyyy-MM-dd)</li>
         <li>

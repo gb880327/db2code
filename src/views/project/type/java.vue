@@ -13,40 +13,33 @@
     </div>
     <div class="row">
       <div class="templateList" v-for="item,i in template" :key="i">
-        <div class="item">
-          <div class="col" style="width:94%;">
-            <div class="row">
-              <div class="col">
-                <Checkbox v-model="item.checked"></Checkbox>
-                <span>模板：</span>
-                <Select v-model="item.templateId" style="width:100px" placement="top-start">
-                  <Option
-                    v-for="tmp in templateList"
-                    :value="tmp.fileName"
-                    :key="tmp.name"
-                    :disabled="templateShow(tmp.fileName)"
-                  >{{ tmp.name }}</Option>
-                </Select>
-              </div>
-              <div class="col">
-                <span class="labelName" style="min-width:40px;">包名：</span>
+        <div class="item" style="height:54px;">
+          <Row>
+            <Col span="2" style="padding-top: 18px;">
+              <Checkbox v-model="item.checked"></Checkbox>
+              <span>模板：</span>
+            </Col>
+            <Col span="4" style="text-align:left; padding-top: 8px;">
+              <Treeselect v-model="item.templateId" :multiple="false" :options="templateList" style="width:150px;"></Treeselect>
+            </Col>
+            <Col span="8" style="text-align:left;padding-top: 12px;">
+               <span class="labelName" style="min-width:40px;">包名：</span>
                 {{package}}.&nbsp;
                 <Input v-model="item.package" style="width:100px;"></Input>
-              </div>
-              <div class="col">
-                <span class="labelName" style="min-width:52px;">文件名：</span>
+            </Col>
+            <Col span="7" style="text-align:left;padding-top: 12px;">
+              <span class="labelName" style="min-width:52px;">文件名：</span>
                 <Input v-model="item.fileName" style="width:160px;"></Input>
-              </div>
-            </div>
-          </div>
-          <div class="col" style="width:6%;vertical-align: top;">
-            <a
+            </Col>
+            <Col span="3">
+              <a
               class="delItem"
               href="javascript:void(0);"
               @click="delTemp(i)"
               v-if="template.length > 1"
             >删除</a>
-          </div>
+            </Col>
+          </Row>
         </div>
       </div>
     </div>
@@ -78,14 +71,16 @@ export default {
     load() {
       let tmpList = this.$getDataForObj(this.$TEMPLATE);
       tmpList = tmpList == null ? [] : tmpList;
+      this.templateList.push({id: "", label: "请选择"});
       tmpList.forEach(item => {
+        let parent = {id: item.id, label: item.name,children:[]};
         item.template.forEach(it => {
-          this.templateList.push({
-            id: it.id,
-            name: it.name,
-            fileName: it.fileName
+          parent.children.push({
+            id: it.fileName,
+            label: it.name
           });
         });
+        this.templateList.push(parent);
       });
     },
     templateShow(id) {

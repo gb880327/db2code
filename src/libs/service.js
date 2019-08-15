@@ -82,6 +82,9 @@ class Service {
                 attrs[config.attrs.remark] = data.table_comment;
                 this.dbUtil.listFieldForTable(tableName).then(data => {
                     attrs[config.attrs.fields] = data;
+                    let primaryType = data.find(it => it.pri);
+                    attrs[config.attrs.primaryKey] = primaryKey.fileName;
+                    attrs[config.attrs.priType] = primaryType.type;
                     resolve(attrs);
                 });
             });

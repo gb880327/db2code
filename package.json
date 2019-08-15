@@ -12,6 +12,7 @@
     },
     "main": "background.js",
     "dependencies": {
+        "@riophae/vue-treeselect": "^0.1.0",
         "adm-zip": "^0.4.13",
         "core-js": "^2.6.5",
         "ejs": "^2.6.1",

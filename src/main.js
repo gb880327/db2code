@@ -23,7 +23,12 @@ import project from '@/views/project/index';
 import setting from '@/views/setting/index';
 import template from '@/views/template/index';
 import dataSource from '@/views/datasource/index';
+// import the component
+import Treeselect from '@riophae/vue-treeselect'
+// import the styles
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
+Vue.component('Treeselect', Treeselect);
 Vue.component('dataSource', dataSource);
 Vue.component('project', project);
 Vue.component('setting', setting);
