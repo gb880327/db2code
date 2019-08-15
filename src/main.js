@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import App from './App.vue'
-import iView from 'iview';
-import 'iview/dist/styles/iview.css';
-import router from './router'
+import Vue from "vue";
+import App from "./App.vue";
+import iView from "iview";
+import "iview/dist/styles/iview.css";
+import router from "./router";
 import {
     success,
     error,
@@ -16,25 +16,25 @@ import {
     readForFile,
     listFileForFolder,
     genId
-} from '@/libs/util';
+} from "@/libs/util";
 const path = require("path");
-import config from '@/libs/config';
-import project from '@/views/project/index';
-import setting from '@/views/setting/index';
-import template from '@/views/template/index';
-import dataSource from '@/views/datasource/index';
+import config from "@/libs/config";
+import project from "@/views/project/index";
+import setting from "@/views/setting/index";
+import template from "@/views/template/index";
+import dataSource from "@/views/datasource/index";
 // import the component
-import Treeselect from '@riophae/vue-treeselect'
+import Treeselect from "@riophae/vue-treeselect";
 // import the styles
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
-Vue.component('Treeselect', Treeselect);
-Vue.component('dataSource', dataSource);
-Vue.component('project', project);
-Vue.component('setting', setting);
-Vue.component('templateManage', template);
+Vue.component("Treeselect", Treeselect);
+Vue.component("dataSource", dataSource);
+Vue.component("project", project);
+Vue.component("setting", setting);
+Vue.component("templateManage", template);
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 Vue.use(iView);
 
 Vue.prototype.$TEMPLATE = config.storePath.template;
@@ -55,9 +55,8 @@ Vue.prototype.$saveToFile = saveToFile;
 Vue.prototype.$readForFile = readForFile;
 Vue.prototype.$listFileForFolder = listFileForFolder;
 
-
 const vue = new Vue({
     // router,
     render: h => h(App)
-}).$mount('#app');
+}).$mount("#app");
 export default vue;

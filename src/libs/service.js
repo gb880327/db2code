@@ -56,10 +56,11 @@ class Service {
      * 删除模板
      * @param {*} path 
      */
-    delTemplate(path) {
+    delTemplate(fileName) {
         return new Promise((resolve, reject) => {
-            if (fs.existsSync(path)) {
-                fs.unlink(path, err => {
+            let filePath = path.join(config.template, fileName + ".ejs");
+            if (fs.existsSync(filePath)) {
+                fs.unlink(filePath, err => {
                     if (err) {
                         error(err);
                         resolve(false);
@@ -82,9 +83,9 @@ class Service {
                 attrs[config.attrs.remark] = data.table_comment;
                 this.dbUtil.listFieldForTable(tableName).then(data => {
                     attrs[config.attrs.fields] = data;
-                    let primaryType = data.find(it => it.pri);
-                    attrs[config.attrs.primaryKey] = primaryKey.fileName;
-                    attrs[config.attrs.priType] = primaryType.type;
+                    let primaryKey = data.find(it => it.pri);
+                    attrs[config.attrs.primaryKey] = primaryKey.fieldName;
+                    attrs[config.attrs.priType] = primaryKey.type;
                     resolve(attrs);
                 });
             });

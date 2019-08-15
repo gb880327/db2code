@@ -69,6 +69,7 @@ export default {
   },
   methods: {
     load() {
+      this.templateList = [];
       let tmpList = this.$getDataForObj(this.$TEMPLATE);
       tmpList = tmpList == null ? [] : tmpList;
       this.templateList.push({id: "", label: "请选择"});

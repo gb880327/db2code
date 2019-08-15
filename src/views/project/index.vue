@@ -10,10 +10,11 @@
         :key="i"
         :class="isSelect(item.id) ? 'select' : ''"
       >
-        <Col span="20" style="padding-left:10px;cursor: pointer;">
+        <Col span="16" style="padding-left:10px;cursor: pointer;">
           <span @click="edit(item.id)" style="display:inline-block;width:100%;">{{item.name}}</span>
         </Col>
-        <Col span="4" style="text-align:right;">
+        <Col span="8" style="text-align:right;">
+          <Icon type="md-copy" class="item-icon" color="#2d8cf0" @click="oncopy(item.id)"></Icon>
           <Icon
             type="ios-close-circle-outline"
             class="item-icon"
@@ -36,7 +37,7 @@
             <Select v-model="db" style="width:200px" @on-change="dbChange">
               <Option v-for="item in dbList" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>&nbsp;&nbsp;
-            <a href="javascript:void(0);" @click="refresh">刷新</a>
+            <a href="javascript:void(0);" @click="refresh">刷新</a>&nbsp;(刷新数据源和模板列表)
           </div>
           <div class="row">
             <pathChoose v-model="output" title="输出目录" :width="300" style="margin-left: 40px;"></pathChoose>
@@ -134,7 +135,7 @@ export default {
   },
   methods: {
     clear() {
-      if (this.type != "") {
+      if (this.type != "" && this.$refs[this.type]) {
         this.$refs[this.type].clear();
       }
       this.$refs.tables.clear();
@@ -157,11 +158,16 @@ export default {
       }
     },
     refresh() {
+      this.dbList = this.$getDataForObj(this.$DATASOURCE);
+      this.dbList = this.dbList == null ? [] : this.dbList;
       if (this.db != "") {
         let item = this.dbList.find(it => it.id === this.db);
         if (item) {
           this.$refs.tables.setProps(item.props);
         }
+      }
+      if(this.type != "" && this.$refs[this.type]){
+        this.$refs[this.type].load();
       }
     },
     exec() {
@@ -249,6 +255,19 @@ export default {
         _this.clear();
         _this.$success("删除成功！");
       });
+    },
+    oncopy(id){
+      let newProject = this.projectList.find(it=>it.id === id);
+      this.projectList.push({
+        id: this.$genId(),
+        name: newProject.name + '_copy',
+        db: newProject.db,
+        output: newProject.output,
+        type: newProject.type,
+        props: newProject.props
+      });
+      this.$saveData(this.$PROJECT, this.projectList);
+      this.$success("复制成功！");
     }
   }
 };

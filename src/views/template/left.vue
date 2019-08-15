@@ -67,7 +67,7 @@ export default {
         });
       } else {
         this.$confirm("确认删除该模板?", () => {
-          this.service.delTemplate(item.path).then(res => {
+          this.service.delTemplate(item.fileName).then(res => {
             if (res) {
               let groupIndex = templateList.findIndex(
                 it => it.id === item.type
