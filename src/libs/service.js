@@ -84,8 +84,10 @@ class Service {
                 this.dbUtil.listFieldForTable(tableName).then(data => {
                     attrs[config.attrs.fields] = data;
                     let primaryKey = data.find(it => it.pri);
-                    attrs[config.attrs.primaryKey] = primaryKey.fieldName;
-                    attrs[config.attrs.priType] = primaryKey.type;
+                    if (primaryKey) {
+                        attrs[config.attrs.primaryKey] = primaryKey.fieldName;
+                        attrs[config.attrs.priType] = primaryKey.type;
+                    }
                     resolve(attrs);
                 });
             });
