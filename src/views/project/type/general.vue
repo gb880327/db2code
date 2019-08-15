@@ -11,6 +11,7 @@
             <Col span="4" style="text-align:left; padding-top: 8px;">
               <Treeselect
                 v-model="item.templateId"
+                :instanceId="i"
                 :multiple="false"
                 :options="templateList"
                 style="width:150px;"
@@ -65,7 +66,7 @@ export default {
       tmpList = tmpList == null ? [] : tmpList;
       this.templateList.push({ id: "", label: "请选择" });
       tmpList.forEach(item => {
-        let parent = { id: item.id, label: item.name, children: [] };
+        let parent = { id: 'parent_'+item.id, label: item.name, children: [] };
         item.template.forEach(it => {
           parent.children.push({
             id: it.fileName,
@@ -99,6 +100,10 @@ export default {
           this.$error("请填写完整的模板信息！");
           return;
         }
+        if(item.templateId.startsWith('parent_')){
+          this.$error("请选择正确的模板，而不是模板分类！");
+          return;
+        }
       }
       return {
         template: this.template
@@ -106,6 +111,7 @@ export default {
     },
     setData(data) {
       this.template = data.template;
+      this.load();
     },
     clear() {
       this.template = [

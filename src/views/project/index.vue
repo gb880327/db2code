@@ -171,12 +171,16 @@ export default {
       }
     },
     exec() {
+      let props = this.$refs[this.type].getData();
+      if(!props){
+        return;
+      }
       let item = this.dbList.find(it => it.id === this.db);
       let data = {
         output: this.output,
         type: this.type,
         db: item.props,
-        props: this.$refs[this.type].getData(),
+        props: props,
         tableList: this.tableList
       };
       this.service.genTemplate(data, (item, isDown) => {
@@ -208,14 +212,14 @@ export default {
         this.$error("请选择项目语言！");
         return;
       }
+      let data = this.$refs[this.type].getData();
+      if(!data){
+        return;
+      }
       let id = this.id === "" ? this.$genId() : this.id;
       if (this.id != "") {
         let index = this.projectList.findIndex(it => it.id === this.id);
         this.projectList.splice(index, 1);
-      }
-      let data = this.$refs[this.type].getData();
-      if(!data){
-        return;
       }
       let item = {
         id: id,
