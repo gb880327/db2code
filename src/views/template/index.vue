@@ -7,7 +7,7 @@
       <div>
         <span>分类：</span>
         <Select v-model="group" style="width:160px">
-          <Option v-for="item in templateList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+          <Option v-for="item in $root.templateList" :value="item.id" :key="item.id">{{ item.name }}</Option>
         </Select>
         <a class="add-group" href="javascript:void(0);" @click="$refs.type.show()">新增分类</a>&nbsp;
         <span>模板名称：</span>
@@ -67,7 +67,6 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.onsuccess();
       this.height = this.$parent.$el.clientHeight;
       this.aceEditor = ace.edit(this.$refs.ace, {
         maxLines: 30, // 最大行数，超过会自动出现滚动条
@@ -109,26 +108,26 @@ export default {
         )
         .then(data => {
           if (data) {
-            let index = this.templateList.findIndex(it => it.id === this.group);
+            let index = this.$root.templateList.findIndex(it => it.id === this.group);
             if (this.current.id == "") {
-              this.templateList[index].template.push({
+              this.$root.templateList[index].template.push({
                 id: id,
                 name: this.name,
                 fileName: id.replace(/-/g, "")
               });
             } else {
-              let oIndex = this.templateList.findIndex(
+              let oIndex = this.$root.templateList.findIndex(
                 it => it.id === this.current.group
               );
-              let oTemp = this.templateList[oIndex].template.findIndex(
+              let oTemp = this.$root.templateList[oIndex].template.findIndex(
                 it => it.id === this.current.id
               );
-              let item = this.templateList[oIndex].template[oTemp];
-              this.templateList[oIndex].template.splice(oTemp, 1);
+              let item = this.$root.templateList[oIndex].template[oTemp];
+              this.$root.templateList[oIndex].template.splice(oTemp, 1);
               item["name"] = this.name;
-              this.templateList[index].template.push(item);
+              this.$root.templateList[index].template.push(item);
             }
-            this.$saveData(this.$TEMPLATE, this.templateList);
+            this.$saveData(this.$TEMPLATE, this.$root.templateList);
             this.$success("保存成功！");
             this.onsuccess();
             this.clean();
@@ -138,8 +137,6 @@ export default {
         });
     },
     onsuccess() {
-      this.templateList = this.$getDataForObj(this.$TEMPLATE);
-      this.templateList = this.templateList == null ? [] : this.templateList;
       this.$refs.leftTree.load();
     },
     importDemo(){

@@ -75,6 +75,9 @@ export default {
 </script>
 
 <style>
+.icon-template{
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABmJLR0QA/wD/AP+gvaeTAAAAmUlEQVQ4y2NgoBbw7Dwh49Z+wpgSDDKDoWLF1SUXHn78TQkGmcFQs/L6wv9A8ODDv//XXpOGQXpAAGQG3KCNN//+n3GGNAzSQzuDXnyBeI8UDNKDYdDlV//+H3mMie9/+A/G2ORAejAMOvH03/9tdzDx9TcQjE0OpGfUoIE06OXX//8ffcTE779DMDY5kB64QVTLtFQrRqgFAL7fvOgdnxBgAAAAAElFTkSuQmCC') !important;
+}
 .title {
   display: inline-block;
   height: 40px;

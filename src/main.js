@@ -23,12 +23,9 @@ import project from "@/views/project/index";
 import setting from "@/views/setting/index";
 import template from "@/views/template/index";
 import dataSource from "@/views/datasource/index";
-// import the component
-import Treeselect from "@riophae/vue-treeselect";
-// import the styles
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import VTreeselect from 'vue-treeselect';
 
-Vue.component("Treeselect", Treeselect);
+Vue.component('VTreeselect', VTreeselect);
 Vue.component("dataSource", dataSource);
 Vue.component("project", project);
 Vue.component("setting", setting);
@@ -55,7 +52,39 @@ Vue.prototype.$saveToFile = saveToFile;
 Vue.prototype.$readForFile = readForFile;
 Vue.prototype.$listFileForFolder = listFileForFolder;
 
+let loadData = (key) => {
+    let data = getDataForObject(key);
+    return !data || data == null ? [] : data;
+};
 const vue = new Vue({
+    data() {
+        return {
+            projectList: loadData(config.storePath.project),
+            templateList: loadData(config.storePath.template),
+            dbList: loadData(config.storePath.datasource)
+        };
+    },
+    computed: {
+        getTemplateList() {
+            let templateList = [];
+            templateList.push({ id: "", text: "请选择" });
+            this.templateList.forEach(item => {
+                let parent = { id: item.id, text: item.name, disabled: true, opened: true, children: [] };
+                item.template.forEach(it => {
+                    parent.children.push({
+                        id: it.fileName,
+                        text: it.name,
+                        icon: 'icon-template'
+                    });
+                });
+                templateList.push(parent);
+            });
+            return templateList;
+        }
+    },
+    methods: {
+
+    },
     // router,
     render: h => h(App)
 }).$mount("#app");

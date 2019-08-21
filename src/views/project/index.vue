@@ -6,7 +6,7 @@
       </div>
       <Row
         class="item"
-        v-for="item,i of projectList"
+        v-for="item,i of $root.projectList"
         :key="i"
         :class="isSelect(item.id) ? 'select' : ''"
       >
@@ -35,9 +35,9 @@
           <div class="row">
             <span class="labelName">数据源：</span>
             <Select v-model="db" style="width:200px" @on-change="dbChange">
-              <Option v-for="item in dbList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+              <Option v-for="item in $root.dbList" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>&nbsp;&nbsp;
-            <a href="javascript:void(0);" @click="refresh">刷新</a>&nbsp;(刷新数据源和模板列表)
+            <a href="javascript:void(0);" @click="refresh">刷新</a>&nbsp;(重新连接数据库)
           </div>
           <div class="row">
             <pathChoose v-model="output" title="输出目录" :width="300" style="margin-left: 40px;"></pathChoose>
@@ -103,8 +103,6 @@ export default {
       service: new Service(),
       height: 0,
       langList: config.langType,
-      dbList: [],
-      projectList: [],
       tableList: [],
       id: "",
       name: "",
@@ -114,7 +112,6 @@ export default {
     };
   },
   created() {
-    this.load();
     this.$nextTick(() => {
       this.height = this.$parent.$el.clientHeight;
     });
@@ -145,14 +142,8 @@ export default {
       this.type = "";
       this.id = "";
     },
-    load() {
-      this.projectList = this.$getDataForObj(this.$PROJECT);
-      this.projectList = this.projectList == null ? [] : this.projectList;
-      this.dbList = this.$getDataForObj(this.$DATASOURCE);
-      this.dbList = this.dbList == null ? [] : this.dbList;
-    },
     dbChange(id) {
-      let item = this.dbList.find(it => it.id === id);
+      let item = this.$root.dbList.find(it => it.id === id);
       if (item) {
         this.$refs.tables.setProps(item.props);
       }
@@ -165,9 +156,6 @@ export default {
         if (item) {
           this.$refs.tables.setProps(item.props);
         }
-      }
-      if(this.type != "" && this.$refs[this.type]){
-        this.$refs[this.type].load();
       }
     },
     exec() {
@@ -218,8 +206,8 @@ export default {
       }
       let id = this.id === "" ? this.$genId() : this.id;
       if (this.id != "") {
-        let index = this.projectList.findIndex(it => it.id === this.id);
-        this.projectList.splice(index, 1);
+        let index = this.$root.projectList.findIndex(it => it.id === this.id);
+        this.$root.projectList.splice(index, 1);
       }
       let item = {
         id: id,
@@ -229,8 +217,8 @@ export default {
         type: this.type,
         props: data
       };
-      this.projectList.push(item);
-      this.$saveData(this.$PROJECT, this.projectList);
+      this.$root.projectList.push(item);
+      this.$saveData(this.$PROJECT, this.$root.projectList);
       this.$success("保存成功！");
       this.clear();
     },
@@ -238,7 +226,7 @@ export default {
       return this.id === id;
     },
     edit(id) {
-      let item = this.projectList.find(it => it.id === id);
+      let item = this.$root.projectList.find(it => it.id === id);
       this.name = item.name;
       this.type = item.type;
       this.db = item.db;
@@ -252,17 +240,17 @@ export default {
     onclose(id) {
       const _this = this;
       this.$confirm("确认删除？", () => {
-        let index = _this.projectList.findIndex(it => it.id === id);
-        _this.projectList.splice(index, 1);
-        _this.$saveData(_this.$PROJECT, _this.projectList);
+        let index = _this.$root.projectList.findIndex(it => it.id === id);
+        _this.$root.projectList.splice(index, 1);
+        _this.$saveData(_this.$PROJECT, _this.$root.projectList);
         _this.load();
         _this.clear();
         _this.$success("删除成功！");
       });
     },
     oncopy(id){
-      let newProject = this.projectList.find(it=>it.id === id);
-      this.projectList.push({
+      let newProject = this.$root.projectList.find(it=>it.id === id);
+      this.$root.projectList.push({
         id: this.$genId(),
         name: newProject.name + '_copy',
         db: newProject.db,
@@ -270,7 +258,7 @@ export default {
         type: newProject.type,
         props: newProject.props
       });
-      this.$saveData(this.$PROJECT, this.projectList);
+      this.$saveData(this.$PROJECT, this.$root.projectList);
       this.$success("复制成功！");
     }
   }

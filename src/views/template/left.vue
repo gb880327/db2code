@@ -44,14 +44,14 @@ export default {
       }
     },
     onedit(item) {
-      let templateList = this.$parent.templateList;
+      let templateList = this.$root.templateList;
       if (item.parent) {
         this.$parent.$refs.type.show(item.id, item.name);
       }
     },
     ondelete(item) {
       const _this = this;
-      let templateList = this.$parent.templateList;
+      let templateList = this.$root.templateList;
       if (item.parent) {
         this.$confirm("确认删除该分类？", () => {
           let index = templateList.findIndex(it => it.id == item.id);
@@ -87,7 +87,7 @@ export default {
     },
     load() {
       this.data = [];
-      let templateList = this.$parent.templateList;
+      let templateList = this.$root.templateList;
       templateList.forEach(item => {
         let children = [];
         item.template.forEach(it => {

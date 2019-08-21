@@ -1,9 +1,9 @@
 const path = require("path");
 const fs = require("fs");
-const ejs = require('ejs');
+const ejs = require("ejs");
 const buffer = require("buffer").Buffer;
-const adm_zip = require('adm-zip');
-import config from './config';
+const adm_zip = require("adm-zip");
+import config from "./config";
 import DataBaseUtil from "./database";
 import {
     readForFile,
@@ -16,22 +16,22 @@ import {
     listFileForFolder
 } from "./util";
 
-
 class Service {
-
     constructor() {
         this.dbUtil = null;
         this.count = 0;
         this.total = 0;
         this.callback = {};
-        ejs.fileLoader = (filePath) => {
-            return buffer.from(fs.readFileSync(path.join(config.template, filePath + ".ejs"))).toString();
+        ejs.fileLoader = filePath => {
+            return buffer
+                .from(fs.readFileSync(path.join(config.template, filePath + ".ejs")))
+                .toString();
         };
     }
 
     readTemplate(name) {
         return new Promise((resolve, reject) => {
-            let filePath = path.join(config.template, name + '.ejs');
+            let filePath = path.join(config.template, name + ".ejs");
             readForFile(filePath).then(data => {
                 resolve(data);
             });
@@ -40,21 +40,21 @@ class Service {
 
     /**
      * 保存模板
-     * @param {*} name 
-     * @param {*} context 
+     * @param {*} name
+     * @param {*} context
      */
     saveTemplate(name, context) {
         return new Promise((resolve, reject) => {
-            let filePath = path.join(config.template, name + '.ejs');
+            let filePath = path.join(config.template, name + ".ejs");
             saveToFile(filePath, context, false).then(data => {
                 resolve(data);
             });
-        })
+        });
     }
 
     /**
      * 删除模板
-     * @param {*} path 
+     * @param {*} path
      */
     delTemplate(fileName) {
         return new Promise((resolve, reject) => {
@@ -68,6 +68,8 @@ class Service {
                         resolve(true);
                     }
                 });
+            } else {
+                resolve(true);
             }
         });
     }
@@ -96,7 +98,7 @@ class Service {
 
     /**
      * 生成模板
-     * @param {*} data 
+     * @param {*} data
      */
     genTemplate(data, callback) {
         this.callback = callback;
@@ -112,7 +114,7 @@ class Service {
         templates.forEach(item => {
             data.tableList.forEach(table => {
                 this.getAttrs(table).then(attrs => {
-                    if (data.type === 'general') {
+                    if (data.type === "general") {
                         this.genGeneralFile(item, table, attrs, data.output);
                     } else if (data.type === "java") {
                         this.genJavaFile(data.props, item, table, attrs, data.output);
@@ -129,14 +131,18 @@ class Service {
         attrs[config.attrs.imports] = [];
         attrs[config.attrs.packageName] = props.package;
         if (item.package != "") {
-            attrs[config.attrs.packageName] = attrs[config.attrs.packageName] + '.' + item.package;
+            attrs[config.attrs.packageName] =
+                attrs[config.attrs.packageName] + "." + item.package;
         }
         attrs[config.attrs.basePackage] = props.package;
         attrs[config.attrs.swagger] = props.swagger;
         if (attrs[config.attrs.fields].findIndex(it => it.type === "Date") >= 0) {
             attrs[config.attrs.imports].push("java.util.Date");
         }
-        let filePath = path.join(output, attrs[config.attrs.packageName].replace(/\./g, '/') + '/');
+        let filePath = path.join(
+            output,
+            attrs[config.attrs.packageName].replace(/\./g, "/") + "/"
+        );
         this.renderFile(table, item.templateId, filePath, item.fileName, attrs);
     }
     renderFile(table, template, filePath, fileName, attrs) {
@@ -163,8 +169,8 @@ class Service {
 
     /**
      * 移动文件
-     * @param {*} source 
-     * @param {*} target 
+     * @param {*} source
+     * @param {*} target
      * @param {*} mode 0-复制 1-移动
      */
     copyFile(source, target, mode = 0) {
@@ -219,11 +225,15 @@ class Service {
             };
             this.copyFile(config.template, tmpPath, 0).then(ret => {
                 if (ret) {
-                    saveToFile(path.join(config.tmp, fileName), JSON.stringify(data), false).then(res => {
+                    saveToFile(
+                        path.join(config.tmp, fileName),
+                        JSON.stringify(data),
+                        false
+                    ).then(res => {
                         if (res) {
                             let zip = new adm_zip();
                             zip.addLocalFolder(config.tmp);
-                            zip.writeZip(path.join(filePath, "db2code.zip"), (err) => {
+                            zip.writeZip(path.join(filePath, "db2code.zip"), err => {
                                 if (!err) {
                                     this.deleteFiles(tmpPath);
                                     fs.unlinkSync(path.join(config.tmp, fileName));
@@ -257,7 +267,7 @@ class Service {
                 this.deleteFiles(tmpPath);
             }
             let unzip = new adm_zip(target);
-            unzip.extractAllToAsync(config.tmp, true, (err) => {
+            unzip.extractAllToAsync(config.tmp, true, err => {
                 if (!err) {
                     readForFile(path.join(config.tmp, fileName), false).then(data => {
                         if (data) {
@@ -284,7 +294,6 @@ class Service {
                 }
             });
         });
-
     }
 }
 

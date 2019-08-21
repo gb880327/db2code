@@ -4,7 +4,7 @@
       <div class="add" @click="clear">
         <Icon type="ios-add" size="22" />
       </div>
-      <Row class="item" v-for="item,i of dbList" :key="i" :class="isSelect(item.id) ? 'select' : ''">
+      <Row class="item" v-for="item,i of $root.dbList" :key="i" :class="isSelect(item.id) ? 'select' : ''">
         <Col span="20" style="padding-left:10px;cursor: pointer;">
           <span @click="edit(item.id)" style="display:inline-block;width:100%;">{{item.name}}</span>
         </Col>
@@ -46,14 +46,12 @@ export default {
     return {
       height: 0,
       dbTypeList: config.dbType,
-      dbList: [],
       id: "",
       type: "mysql",
       name: ""
     };
   },
   created() {
-    this.load();
     this.$nextTick(() => {
       this.height = this.$parent.$el.clientHeight;
     });
@@ -68,7 +66,7 @@ export default {
       return this.id === id;
     },
     edit(id) {
-      let item = this.dbList.find(it => it.id === id);
+      let item = this.$root.dbList.find(it => it.id === id);
       this.name = item.name;
       this.type = item.type;
       this.id = id;
@@ -77,10 +75,9 @@ export default {
     onclose(id) {
       const _this = this;
       this.$confirm("确认删除？", () => {
-        let index = _this.dbList.findIndex(it => it.id === id);
-        _this.dbList.splice(index, 1);
-        _this.$saveData(_this.$DATASOURCE, _this.dbList);
-        _this.load();
+        let index = _this.$root.dbList.findIndex(it => it.id === id);
+        _this.$root.dbList.splice(index, 1);
+        _this.$saveData(_this.$DATASOURCE, _this.$root.dbList);
         _this.$success("删除成功！");
       });
     },
@@ -106,17 +103,12 @@ export default {
         props: props
       };
       if (this.id != "") {
-        let index = this.dbList.findIndex(it => it.id === this.id);
-        this.dbList.splice(index, 1);
+        let index = this.$root.dbList.findIndex(it => it.id === this.id);
+        this.$root.dbList.splice(index, 1);
       }
-      this.dbList.push(item);
-      this.$saveData(this.$DATASOURCE, this.dbList);
-      this.load();
+      this.$root.dbList.push(item);
+      this.$saveData(this.$DATASOURCE, this.$root.dbList);
       this.$success("保存成功！");
-    },
-    load() {
-      this.dbList = this.$getDataForObj(this.$DATASOURCE);
-      this.dbList = this.dbList == null ? [] : this.dbList;
     }
   }
 };

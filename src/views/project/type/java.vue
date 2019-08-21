@@ -20,7 +20,7 @@
               <span>模板：</span>
             </Col>
             <Col span="4" style="text-align:left; padding-top: 8px;">
-              <Treeselect v-model="item.templateId" :multiple="false" :options="templateList" style="width:150px;"></Treeselect>
+              <VTreeselect :data="$root.getTemplateList" value-field-name="id" v-model="item.templateId" size="small"></VTreeselect>
             </Col>
             <Col span="8" style="text-align:left;padding-top: 12px;">
                <span class="labelName" style="min-width:40px;">包名：</span>
@@ -51,7 +51,6 @@ export default {
   name: "java",
   data() {
     return {
-      templateList: [],
       package: "",
       swagger: false,
       template: [
@@ -65,25 +64,8 @@ export default {
     };
   },
   created() {
-    this.load();
   },
   methods: {
-    load() {
-      this.templateList = [];
-      let tmpList = this.$getDataForObj(this.$TEMPLATE);
-      tmpList = tmpList == null ? [] : tmpList;
-      this.templateList.push({id: "", label: "请选择"});
-      tmpList.forEach(item => {
-        let parent = {id: 'parent_'+item.id, label: item.name,children:[]};
-        item.template.forEach(it => {
-          parent.children.push({
-            id: it.fileName,
-            label: it.name
-          });
-        });
-        this.templateList.push(parent);
-      });
-    },
     templateShow(id) {
       return this.template.findIndex(item => item.templateId === id) >= 0;
     },
@@ -108,10 +90,6 @@ export default {
           this.$error("请填写完整的模板信息！");
           return;
         }
-        if(item.templateId.startsWith('parent_')){
-          this.$error("请选择正确的模板，而不是模板分类！");
-          return;
-        }
       }
       return {
         package: this.package,
@@ -123,7 +101,6 @@ export default {
       this.package = data.package;
       this.swagger = data.swagger;
       this.template = data.template;
-      this.load();
     },
     clear() {
       this.package = "";
