@@ -163,7 +163,7 @@ export default {
       if(!props){
         return;
       }
-      let item = this.dbList.find(it => it.id === this.db);
+      let item = this.$root.dbList.find(it => it.id === this.db);
       let data = {
         output: this.output,
         type: this.type,
