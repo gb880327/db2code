@@ -2,10 +2,8 @@
   <div id="app">
     <div class="layout">
       <Layout>
-        <div class="header">
-          <span class="title">代码生成工具-2.0</span>
-        </div>
-        <Content :style="{background: '#fff', height: (height-50)+'px'}">
+        <div class="header"></div>
+        <Content :style="{background: '#fff', height: (height-4)+'px'}">
           <Tabs @on-click="gotoPath" v-model="current">
             <TabPane label="项目" icon="md-cube" name="project"></TabPane>
             <TabPane label="数据源" icon="ios-analytics" name="dataSource"></TabPane>
@@ -18,20 +16,65 @@
         </Content>
       </Layout>
     </div>
+    <Modal v-model="about" :closable="false">
+      <div class="about">
+        <Row>
+          <Col span="8" style="text-align:right;">
+            <img src="./assets/logo.png" width="64" />
+          </Col>
+          <Col span="16" style="padding-left:30px;">
+            <div class="title">{{info.name}}</div>
+            <ul>
+              <li>版本：{{info.version}}</li>
+              <li>Electron: {{info.devDependencies.electron.replace('^','')}}</li>
+              <li>node：{{info.nodejs}}</li>
+              <li>chrome：{{info.chrome}}</li>
+              <li>v8：{{info.v8}}</li>
+              <li>iview：{{info.dependencies.iview.replace('^','')}}</li>
+              <li>vue：{{info.dependencies.vue.replace('^','')}}</li>
+            </ul>
+            <div class="copy">2019 &copy; Rookie</div>
+          </Col>
+        </Row>
+      </div>
+      <div slot="footer"></div>
+    </Modal>
   </div>
 </template>
 <script>
 import config from "@/libs/config";
 const fs = require("fs");
+const { ipcRenderer } = require("electron");
 
 export default {
   data() {
     return {
+      about: false,
+      info: {
+        name: '',
+        version: '',
+        nodejs:'',
+        chrome:'',
+        v8:'',
+        dependencies:{iview:'',vue:''},
+        devDependencies:{electron:''}
+      },
       height: document.documentElement.clientHeight,
       current: "project"
     };
   },
   created() {
+    const _this = this;
+    ipcRenderer.on("about", (event, args) => {
+      _this.about = true;
+      let info = require("../package.json");
+      _this.info = info;
+      let run = process.versions;
+      _this.info.nodejs = run.node;
+      _this.info.chrome = run.chrome;
+      _this.info.v8 = run.v8;
+    });
+
     if (!fs.existsSync(config.dataPath)) {
       fs.mkdir(config.dataPath, err => {
         if (err) {
@@ -47,7 +90,10 @@ export default {
       });
     }
     this.current = this.$getDataForStr("currentPath");
-    this.current = this.current == null || this.current.startsWith('/') ? "project" : this.current;
+    this.current =
+      this.current == null || this.current.startsWith("/")
+        ? "project"
+        : this.current;
     this.gotoPath(this.current);
   },
   mounted() {
@@ -72,29 +118,14 @@ export default {
 </script>
 
 <style>
-.icon-template{
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABmJLR0QA/wD/AP+gvaeTAAAAmUlEQVQ4y2NgoBbw7Dwh49Z+wpgSDDKDoWLF1SUXHn78TQkGmcFQs/L6wv9A8ODDv//XXpOGQXpAAGQG3KCNN//+n3GGNAzSQzuDXnyBeI8UDNKDYdDlV//+H3mMie9/+A/G2ORAejAMOvH03/9tdzDx9TcQjE0OpGfUoIE06OXX//8ffcTE779DMDY5kB64QVTLtFQrRqgFAL7fvOgdnxBgAAAAAElFTkSuQmCC') !important;
-}
-.title {
-  display: inline-block;
-  height: 40px;
-  padding-left: 40px;
-  margin-left: 20px;
-  font-size: 16px;
-  font-weight: bold;
-  color: white;
-  background-image: url(assets/logo.png);
-  background-size: 32px;
-  background-position: left 8px;
-  background-repeat: no-repeat;
+.icon-template {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABmJLR0QA/wD/AP+gvaeTAAAAmUlEQVQ4y2NgoBbw7Dwh49Z+wpgSDDKDoWLF1SUXHn78TQkGmcFQs/L6wv9A8ODDv//XXpOGQXpAAGQG3KCNN//+n3GGNAzSQzuDXnyBeI8UDNKDYdDlV//+H3mMie9/+A/G2ORAejAMOvH03/9tdzDx9TcQjE0OpGfUoIE06OXX//8ffcTE779DMDY5kB64QVTLtFQrRqgFAL7fvOgdnxBgAAAAAElFTkSuQmCC") !important;
 }
 .header {
-  /* position: fixed; */
-  height: 50px;
-  line-height: 50px;
+  height: 4px;
   width: 100%;
   border-radius: 0;
-  background-color: #515a6e;
+  background-color: #2d8cf0;
 }
 .layout {
   background: #f5f7f9;
@@ -184,5 +215,27 @@ export default {
 }
 .tips a {
   color: red;
+}
+.about {
+  padding: 30px;
+}
+.about .title {
+  font-size: 18px;
+  font-weight: bold;
+}
+.about ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+.about ul li {
+  font-size: 14px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.about .copy{
+  margin-top:10px;
+  font-size: 14px;
 }
 </style>

@@ -1,217 +1,217 @@
-'use strict'
-import {
-    app,
-    protocol,
-    BrowserWindow,
-    Menu
-} from 'electron'
+"use strict";
+import { app, protocol, BrowserWindow, Menu } from "electron";
 import {
     createProtocol,
     installVueDevtools
-} from 'vue-cli-plugin-electron-builder/lib'
-const isDevelopment = process.env.NODE_ENV !== 'production'
-
+} from "vue-cli-plugin-electron-builder/lib";
+const isDevelopment = process.env.NODE_ENV !== "production";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let win
+let win;
 
 // Standard scheme must be registered before the app is ready
-protocol.registerStandardSchemes(['app'], {
+protocol.registerStandardSchemes(["app"], {
     secure: true
-})
-
+});
 
 const template = [{
-        label: 'Edit',
+        label: "编辑",
         submenu: [{
-                role: 'undo'
+                label: "撤销",
+                role: "undo"
             },
             {
-                role: 'redo'
+                label: "恢复",
+                role: "redo"
             },
             {
-                type: 'separator'
+                type: "separator"
             },
             {
-                role: 'cut'
+                label: "剪切",
+                role: "cut"
             },
             {
-                role: 'copy'
+                label: "复制",
+                role: "copy"
             },
             {
-                role: 'paste'
+                label: "粘贴",
+                role: "paste"
             },
             {
-                role: 'pasteandmatchstyle'
+                label: "删除",
+                role: "delete"
             },
             {
-                role: 'delete'
-            },
-            {
-                role: 'selectall'
+                label: "全选",
+                role: "selectall"
             }
         ]
     },
     {
-        role: 'window',
+        label: "查看",
         submenu: [{
-                role: 'minimize'
+                label: "刷新",
+                role: "reload"
             },
             {
-                role: 'close'
+                label: "强制刷新",
+                role: "forcereload"
             }
         ]
     },
     {
-        role: 'help',
+        label: "窗口",
+        role: "window",
         submenu: [{
-            label: 'Learn More',
-            click() {
-                require('electron').shell.openExternal('https://electronjs.org')
+                label: "最小化",
+                role: "minimize"
+            },
+            {
+                label: "退出",
+                role: "close"
             }
-        }]
+        ]
+    },
+    {
+        label: '帮助',
+        role: "Help",
+        submenu: [{
+                label: "关于",
+                click() {
+                    win.webContents.send('about');
+                }
+            },
+            {
+                label: "GitHub",
+                click() {
+                    require("electron").shell.openExternal(
+                        "https://github.com/gb880327/db2code"
+                    );
+                }
+            }
+        ]
     }
-]
+];
 
-if (process.platform === 'darwin') {
+if (process.platform === "darwin") {
     template.unshift({
         label: app.getName(),
         submenu: [{
-                role: 'about'
+                type: "separator"
             },
             {
-                type: 'separator'
+                type: "separator"
             },
             {
-                role: 'services',
-                submenu: []
+                label: '隐藏',
+                role: "hide"
             },
             {
-                type: 'separator'
+                label: '隐藏其他',
+                role: "hideothers"
             },
             {
-                role: 'hide'
+                label: '全部显示',
+                role: "unhide"
             },
             {
-                role: 'hideothers'
+                type: "separator"
             },
             {
-                role: 'unhide'
-            },
-            {
-                type: 'separator'
-            },
-            {
-                role: 'quit'
+                label: '退出',
+                role: "quit"
             }
         ]
-    })
-
-    // Edit menu
-    template[1].submenu.push({
-        type: 'separator'
-    }, {
-        label: 'Speech',
-        submenu: [{
-                role: 'startspeaking'
-            },
-            {
-                role: 'stopspeaking'
-            }
-        ]
-    })
+    });
 
     // Window menu
     template[3].submenu = [{
-            role: 'close'
+            label: '关闭',
+            role: "close"
         },
         {
-            role: 'minimize'
+            label: '最小化',
+            role: "minimize"
         },
         {
-            role: 'zoom'
-        },
-        {
-            type: 'separator'
-        },
-        {
-            role: 'front'
+            type: "separator"
         }
-    ]
+    ];
 }
 
-const menu = Menu.buildFromTemplate(template)
-Menu.setApplicationMenu(menu)
+const menu = Menu.buildFromTemplate(template);
+Menu.setApplicationMenu(menu);
 
 function createWindow() {
-    const electronScreen = require('electron').screen
-    const size = electronScreen.getPrimaryDisplay().size
+    const electronScreen = require("electron").screen;
+    const size = electronScreen.getPrimaryDisplay().size;
 
     // Create the browser window.
     win = new BrowserWindow({
         width: size.width,
         height: size.height
     });
-    console.log(app.getAppPath());
     // win.webContents.openDevTools();
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
-        win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-            // if (!process.env.IS_TEST) win.webContents.openDevTools()
+        win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+        if (!process.env.IS_TEST) win.webContents.openDevTools()
     } else {
-        createProtocol('app')
-            // Load the index.html when not in development
-        win.loadURL('app://./index.html')
+        createProtocol("app");
+        // Load the index.html when not in development
+        win.loadURL("app://./index.html");
     }
 
-    win.on('closed', () => {
-        win = null
-    })
+    win.on("closed", () => {
+        win = null;
+    });
 }
 
 // Quit when all windows are closed.
-app.on('window-all-closed', () => {
+app.on("window-all-closed", () => {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-        app.quit()
+    if (process.platform !== "darwin") {
+        app.quit();
     }
-})
+});
 
-app.on('activate', () => {
+app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (win === null) {
-        createWindow()
+        createWindow();
     }
-})
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', async() => {
+app.on("ready", async() => {
     if (isDevelopment && !process.env.IS_TEST) {
         // Install Vue Devtools
         try {
             await installVueDevtools();
         } catch (e) {
-            console.error('Vue Devtools failed to install:', e.toString())
+            console.error("Vue Devtools failed to install:", e.toString());
         }
     }
-    createWindow()
-})
+    createWindow();
+});
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
-    if (process.platform === 'win32') {
-        process.on('message', data => {
-            if (data === 'graceful-exit') {
-                app.quit()
+    if (process.platform === "win32") {
+        process.on("message", data => {
+            if (data === "graceful-exit") {
+                app.quit();
             }
-        })
+        });
     } else {
-        process.on('SIGTERM', () => {
-            app.quit()
-        })
+        process.on("SIGTERM", () => {
+            app.quit();
+        });
     }
 }
