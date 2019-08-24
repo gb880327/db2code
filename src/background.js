@@ -53,37 +53,6 @@ const template = [{
         ]
     },
     {
-        label: 'View',
-        submenu: [{
-                role: 'reload'
-            },
-            {
-                role: 'forcereload'
-            },
-            {
-                role: 'toggledevtools'
-            }, // !! 这里加入打开调试工具, 如果你不希望打开请去掉这行
-            {
-                type: 'separator'
-            },
-            {
-                role: 'resetzoom'
-            },
-            {
-                role: 'zoomin'
-            },
-            {
-                role: 'zoomout'
-            },
-            {
-                type: 'separator'
-            },
-            {
-                role: 'togglefullscreen'
-            }
-        ]
-    },
-    {
         role: 'window',
         submenu: [{
                 role: 'minimize'
