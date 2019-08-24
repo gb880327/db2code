@@ -114,42 +114,5 @@ export default {
 };
 </script>
 <style scoped>
-.select {
-    background-color: #ece7e7;
-}
-.item {
-  margin: 5px 0;
-  border: 1px solid #80808059;
-  padding: 5px 0;
-  border-radius: 5px;
-}
-.item-icon {
-  font-size: 18px;
-  margin-right: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  vertical-align: text-bottom;
-}
-.left {
-  height: 100%;
-  padding: 0 10px;
-  display: inline-block;
-  border-right: 1px solid #dcdee2;
-  width: 240px;
-}
-.right {
-  width: calc(100% - 260px);
-  display: inline-block;
-  margin: 10px 10px;
-  vertical-align: top;
-  height: 100%;
-  overflow-y: scroll;
-}
-.add {
-  border: 1px dashed #80808099;
-  border-radius: 5px;
-  text-align: center;
-  cursor: pointer;
-  margin-top: 5px;
-}
+@import './index.css';
 </style>

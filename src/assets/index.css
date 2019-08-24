@@ -1,0 +1,146 @@
+.icon-template {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABmJLR0QA/wD/AP+gvaeTAAAAmUlEQVQ4y2NgoBbw7Dwh49Z+wpgSDDKDoWLF1SUXHn78TQkGmcFQs/L6wv9A8ODDv//XXpOGQXpAAGQG3KCNN//+n3GGNAzSQzuDXnyBeI8UDNKDYdDlV//+H3mMie9/+A/G2ORAejAMOvH03/9tdzDx9TcQjE0OpGfUoIE06OXX//8ffcTE779DMDY5kB64QVTLtFQrRqgFAL7fvOgdnxBgAAAAAElFTkSuQmCC") !important;
+}
+
+.header {
+    height: 4px;
+    width: 100%;
+    border-radius: 0;
+    background-color: #2d8cf0;
+}
+
+.layout {
+    background: #f5f7f9;
+    position: relative;
+    /* border-radius: 4px; */
+    overflow: hidden;
+}
+
+.menu {
+    width: 100%;
+    position: fixed;
+}
+
+.content {
+    border-top: 1px solid #dcdee2;
+}
+
+.pane {
+    padding: 10px;
+}
+
+.split-left {
+    border-top: 1px solid #dcdee2;
+    border-left: 1px solid #dcdee2;
+    border-bottom: 1px solid #dcdee2;
+}
+
+.split-right {
+    padding: 10px 20px;
+    border-top: 1px solid #dcdee2;
+    border-right: 1px solid #dcdee2;
+    border-bottom: 1px solid #dcdee2;
+    overflow-y: scroll;
+}
+
+.left-list {
+    width: 100%;
+    overflow-y: scroll;
+}
+
+.left-opt {
+    border-bottom: 1px solid #dcdee2;
+    width: 100%;
+    height: 35px;
+}
+
+.itemList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.itemList li {
+    padding: 5px 10px;
+    margin: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #dcdee2;
+    border-radius: 5px;
+    color: black;
+}
+
+.itemList li:hover {
+    background-color: #b0b4bb;
+}
+
+.itemList .selected {
+    background-color: #515a6c;
+    color: #ffffff;
+}
+
+.row {
+    margin: 10px 0;
+}
+
+.col {
+    display: inline-block;
+}
+
+.labelName {
+    display: inline-block;
+    min-width: 100px;
+    text-align: right;
+}
+
+.btn {
+    margin: 0 5px;
+}
+
+.moduleTitle {
+    padding: 4px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #b0b4bb69;
+    margin-bottom: 2px;
+}
+
+.addItem {
+    width: 100%;
+    font-weight: bold;
+}
+
+.tips {
+    padding-left: 15px;
+}
+
+.tips a {
+    color: red;
+}
+
+.about {
+    padding: 30px;
+}
+
+.about .title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.about ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+}
+
+.about ul li {
+    font-size: 14px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.about .copy {
+    margin-top: 10px;
+    font-size: 14px;
+}

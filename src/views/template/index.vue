@@ -168,22 +168,5 @@ export default {
 };
 </script>
 <style scoped>
-.left {
-  height: 100%;
-  padding: 0 10px;
-  display: inline-block;
-  border-right: 1px solid #dcdee2;
-  width: 240px;
-}
-.right {
-  width: calc(100% - 260px);
-  display: inline-block;
-  margin: 10px 10px;
-  vertical-align: top;
-  height: 100%;
-  overflow-y: scroll;
-}
-.add-group {
-  margin: 0 5px;
-}
+@import './index.css';
 </style>

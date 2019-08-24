@@ -118,33 +118,5 @@ export default {
 };
 </script>
 <style scoped>
-.add {
-  width: 100%;
-  border: 1px dashed #dcdee2;
-}
-.add:focus {
-  box-shadow: none;
-}
-.templateList {
-  padding-left: 30px;
-}
-.templateList .item {
-  margin: 5px 0;
-  padding: 0 0 0 10px;
-  border: 1px dashed #8080804f;
-}
-.delItem {
-  display: inline-block;
-  height: 50px;
-  vertical-align: middle;
-  line-height: 50px;
-  width: 100%;
-  text-align: center;
-  background-color: #ed4014;
-  color: #ffffff;
-  margin: 1px -1px;
-}
-.delItem:hover {
-  background-color: #f16643;
-}
+@import './type.css';
 </style>
