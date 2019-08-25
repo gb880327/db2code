@@ -149,10 +149,8 @@ export default {
       }
     },
     refresh() {
-      this.dbList = this.$getDataForObj(this.$DATASOURCE);
-      this.dbList = this.dbList == null ? [] : this.dbList;
       if (this.db != "") {
-        let item = this.dbList.find(it => it.id === this.db);
+        let item = this.$root.dbList.find(it => it.id === this.db);
         if (item) {
           this.$refs.tables.setProps(item.props);
         }
@@ -218,7 +216,7 @@ export default {
         props: data
       };
       this.$root.projectList.push(item);
-      this.$saveData(this.$PROJECT, this.$root.projectList);
+      this.$root.saveConfig();
       this.$success("保存成功！");
       this.clear();
     },
@@ -242,7 +240,7 @@ export default {
       this.$confirm("确认删除？", () => {
         let index = _this.$root.projectList.findIndex(it => it.id === id);
         _this.$root.projectList.splice(index, 1);
-        _this.$saveData(_this.$PROJECT, _this.$root.projectList);
+        _this.$root.saveConfig();
         _this.load();
         _this.clear();
         _this.$success("删除成功！");
@@ -258,7 +256,7 @@ export default {
         type: newProject.type,
         props: newProject.props
       });
-      this.$saveData(this.$PROJECT, this.$root.projectList);
+      _this.$root.saveConfig();
       this.$success("复制成功！");
     }
   }

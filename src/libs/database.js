@@ -34,7 +34,8 @@ class DataBaseUtil {
             port: props.port,
             database: props.dbName,
             user: props.userName,
-            password: props.passWord
+            password: props.passWord,
+            connectTimeout: 1000 * 5
         });
         this.conn.connect(err => {
             if (err) {

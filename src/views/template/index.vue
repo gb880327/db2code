@@ -127,7 +127,7 @@ export default {
               item["name"] = this.name;
               this.$root.templateList[index].template.push(item);
             }
-            this.$saveData(this.$TEMPLATE, this.$root.templateList);
+            this.$root.saveConfig();
             this.$success("保存成功！");
             this.onsuccess();
             this.clean();

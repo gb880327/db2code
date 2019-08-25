@@ -55,7 +55,7 @@ export default {
         });
       }
       this.groupName = "";
-      this.$saveData(this.$TEMPLATE,templateList);
+      this.$root.saveConfig();
       this.$success("保存成功！");
       this.modal = false;
       this.$emit('success');

@@ -11,8 +11,9 @@
       </Col>
       <Col span="12">
         <div class="row">
-          <Button @click="importProfile" style="width:45%;">导入配置</Button>&nbsp;&nbsp;
-          <Button @click="exportProfile" style="width:45%;">导出配置</Button>
+          <Button @click="importProfile(0)" type="info" style="width:25%;">覆盖配置</Button>&nbsp;&nbsp;
+          <Button @click="importProfile(1)" type="success" style="width:25%;">合并配置</Button>&nbsp;&nbsp;
+          <Button @click="exportProfile" type="primary" style="width:25%;">导出配置</Button>
         </div>
       </Col>
     </Row>
@@ -46,6 +47,7 @@ export default {
       disabled: false,
       outpath: "",
       type: "",
+      importType: 0,
       service: new Service()
     };
   },
@@ -86,14 +88,19 @@ export default {
       }
       if (this.type === "import") {
         const _this = this;
-        this.$confirm("导入配置将会覆盖现有配置信息，是否继续？", () => {
-          _this.service.importProfile(_this.outpath).then(ret => {
-            if(ret){
-              _this.$success("导入成功！");
-              _this.cancel();
-            }
-          });
-        });
+        this.$confirm(
+          "是否" + (this.importType == 0 ? "覆盖" : "合并") + "配置信息！",
+          () => {
+            this.service
+              .importProfile(this.outpath, this.importType)
+              .then(ret => {
+                if (ret) {
+                  this.$success("导入成功！");
+                  location.reload();
+                }
+              });
+          }
+        );
       } else {
         this.service.exportProfile(this.outpath).then(ret => {
           if (ret) {
@@ -108,8 +115,9 @@ export default {
       this.type = "";
       this.modal = false;
     },
-    importProfile() {
+    importProfile(importType) {
       this.modal = true;
+      this.importType = importType;
       this.type = "import";
     },
     exportProfile() {

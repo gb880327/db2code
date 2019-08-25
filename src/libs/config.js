@@ -15,6 +15,7 @@ let config = {
         project: "project"
     },
     dataPath: getBasePath(),
+    configFile: path.join(getBasePath(), 'config.json'),
     template: path.join(getBasePath(), 'template'),
     tmp: path.join(getBasePath(), "tmp"),
     dbType: ["mysql"],

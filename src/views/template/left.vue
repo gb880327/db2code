@@ -60,7 +60,7 @@ export default {
             return;
           }
           templateList.splice(index, 1);
-          _this.$saveData(_this.$TEMPLATE, templateList);
+          _this.$root.saveConfig();
           _this.$success("删除成功！");
           _this.load();
           _this.$parent.onsuccess();
@@ -76,7 +76,7 @@ export default {
               let index = group.template.findIndex(it => it.id === item.id);
               group.template.splice(index, 1);
               templateList[groupIndex] = group;
-              _this.$saveData(_this.$TEMPLATE, templateList);
+              _this.$root.saveConfig();
               _this.$success("删除成功！");
               _this.load();
               _this.$parent.onsuccess();

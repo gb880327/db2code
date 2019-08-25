@@ -77,7 +77,7 @@ export default {
       this.$confirm("确认删除？", () => {
         let index = _this.$root.dbList.findIndex(it => it.id === id);
         _this.$root.dbList.splice(index, 1);
-        _this.$saveData(_this.$DATASOURCE, _this.$root.dbList);
+        this.$root.saveConfig();
         _this.$success("删除成功！");
       });
     },
@@ -107,7 +107,7 @@ export default {
         this.$root.dbList.splice(index, 1);
       }
       this.$root.dbList.push(item);
-      this.$saveData(this.$DATASOURCE, this.$root.dbList);
+      this.$root.saveConfig();
       this.$success("保存成功！");
     }
   }

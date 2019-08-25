@@ -11,8 +11,7 @@ import {
     error,
     dateFormat,
     mkdirs,
-    getDataForObject,
-    saveData,
+    loadConfig,
     listFileForFolder
 } from "./util";
 
@@ -29,6 +28,10 @@ class Service {
         };
     }
 
+    /**
+     * 读取模板
+     * @param {*} name
+     */
     readTemplate(name) {
         return new Promise((resolve, reject) => {
             let filePath = path.join(config.template, name + ".ejs");
@@ -199,57 +202,24 @@ class Service {
         });
     }
 
-    deleteFiles(target) {
-        listFileForFolder(target).then(res => {
-            res.forEach(it => {
-                fs.unlinkSync(path.join(target, it));
-            });
-            fs.rmdirSync(target);
-        });
-    }
-
     exportProfile(filePath) {
         return new Promise((resolve, reject) => {
-            if (!fs.existsSync(config.tmp)) {
-                fs.mkdirSync(config.tmp);
-            }
-            let tmpPath = path.join(config.tmp, "template");
-            let fileName = "config.json";
-            let template = config.storePath.template;
-            let datasource = config.storePath.datasource;
-            let project = config.storePath.project;
-            let data = {
-                template: getDataForObject(template),
-                datasource: getDataForObject(datasource),
-                project: getDataForObject(project)
-            };
-            this.copyFile(config.template, tmpPath, 0).then(ret => {
-                if (ret) {
-                    saveToFile(
-                        path.join(config.tmp, fileName),
-                        JSON.stringify(data),
-                        false
-                    ).then(res => {
-                        if (res) {
-                            let zip = new adm_zip();
-                            zip.addLocalFolder(config.tmp);
-                            zip.writeZip(path.join(filePath, "db2code.zip"), err => {
-                                if (!err) {
-                                    this.deleteFiles(tmpPath);
-                                    fs.unlinkSync(path.join(config.tmp, fileName));
-                                    resolve(true);
-                                }
-                            });
-                        } else {
-                            resolve(false);
-                        }
-                    });
+            let zip = new adm_zip();
+            zip.addLocalFolder(config.dataPath);
+            zip.writeZip(path.join(filePath, "db2code.zip"), err => {
+                if (!err) {
+                    resolve(true);
                 }
             });
         });
     }
 
-    importProfile(target) {
+    /**
+     * 导入配置
+     * @param {*} target
+     * @param {*} type 0-覆盖 1-合并
+     */
+    importProfile(target, type = 0) {
         return new Promise((resolve, reject) => {
             if (!target.endsWith(".zip")) {
                 error("文件格式不正确！");
@@ -258,34 +228,57 @@ class Service {
             if (!fs.existsSync(config.tmp)) {
                 fs.mkdirSync(config.tmp);
             }
-            let tmpPath = path.join(config.tmp, "template");
-            let fileName = "config.json";
-            let template = config.storePath.template;
-            let datasource = config.storePath.datasource;
-            let project = config.storePath.project;
-            if (fs.existsSync(tmpPath)) {
-                this.deleteFiles(tmpPath);
+            if (type == 0) {
+                listFileForFolder(config.template).then(res => {
+                    res.forEach(it => {
+                        fs.unlinkSync(path.join(config.template, it));
+                    });
+                });
             }
+            let tmpPath = path.join(config.tmp, "template");
             let unzip = new adm_zip(target);
             unzip.extractAllToAsync(config.tmp, true, err => {
                 if (!err) {
-                    readForFile(path.join(config.tmp, fileName), false).then(data => {
-                        if (data) {
-                            let configTmp = JSON.parse(data);
-                            saveData(template, configTmp[template]);
-                            saveData(datasource, configTmp[datasource]);
-                            saveData(project, configTmp[project]);
-                            this.copyFile(tmpPath, config.template, 1).then(ret => {
-                                if (ret) {
-                                    fs.rmdirSync(tmpPath);
-                                    fs.unlinkSync(path.join(config.tmp, fileName));
-                                    resolve(true);
-                                } else {
-                                    resolve(false);
-                                }
-                            });
+                    this.copyFile(tmpPath, config.template, 1).then(ret => {
+                        if (ret) {
+                            if (type == 0) {
+                                fs.renameSync(
+                                    path.join(config.tmp, "config.json"),
+                                    path.join(config.dataPath, "config.json"),
+                                    err => {}
+                                );
+                            } else {
+                                let data = loadConfig(config.configFile);
+                                let importData = loadConfig(
+                                    path.join(config.tmp, "config.json")
+                                );
+                                importData.project.forEach(item => {
+                                    if (data.project.findIndex(it => it.id === item.id) < 0) {
+                                        data.project.push(item);
+                                    }
+                                });
+                                importData.datasource.forEach(item => {
+                                    if (data.datasource.findIndex(it => it.id === item.id) < 0) {
+                                        data.datasource.push(item);
+                                    }
+                                });
+                                importData.template.forEach(item => {
+                                    let index = data.template.findIndex(it => it.id === item.id);
+                                    if (index < 0) {
+                                        data.template.push(item);
+                                    } else {
+                                        item.template.forEach(sub => {
+                                            if (data.template[index].template.findIndex(it => it.id === sub.id) < 0) {
+                                                data.template[index].template.push(sub);
+                                            }
+                                        });
+                                    }
+                                });
+                                saveToFile(config.configFile, JSON.stringify(data), false);
+                            }
+                            this.deleteFiles(config.tmp);
+                            resolve(true);
                         } else {
-                            error(data);
                             resolve(false);
                         }
                     });
@@ -294,6 +287,24 @@ class Service {
                 }
             });
         });
+    }
+
+    deleteFiles(filePath) {
+        if (!fs.existsSync(filePath)) {
+            return;
+        }
+        if (fs.statSync(filePath).isDirectory()) {
+            fs.readdir(filePath, (err, files) => {
+                files.forEach(file => {
+                    this.deleteFiles(path.join(filePath, file));
+                });
+                if (files.length == 0) {
+                    fs.rmdirSync(filePath);
+                }
+            });
+        } else {
+            fs.unlinkSync(filePath);
+        }
     }
 }
 
