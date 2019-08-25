@@ -104,27 +104,31 @@ class Service {
      * @param {*} data
      */
     genTemplate(data, callback) {
-        this.callback = callback;
-        this.dbUtil = new DataBaseUtil(data.db);
+        try {
+            this.callback = callback;
+            this.dbUtil = new DataBaseUtil(data.db);
 
-        let templates = data.props.template;
-        this.count = 0;
-        templates = templates.filter(it => it.checked);
-        this.total = templates.length * data.tableList.length;
-        if (this.total == 0) {
-            return;
-        }
-        templates.forEach(item => {
-            data.tableList.forEach(table => {
-                this.getAttrs(table).then(attrs => {
-                    if (data.type === "general") {
-                        this.genGeneralFile(item, table, attrs, data.output);
-                    } else if (data.type === "java") {
-                        this.genJavaFile(data.props, item, table, attrs, data.output);
-                    }
+            let templates = data.props.template;
+            this.count = 0;
+            templates = templates.filter(it => it.checked);
+            this.total = templates.length * data.tableList.length;
+            if (this.total == 0) {
+                return;
+            }
+            templates.forEach(item => {
+                data.tableList.forEach(table => {
+                    this.getAttrs(table).then(attrs => {
+                        if (data.type === "general") {
+                            this.genGeneralFile(item, table, attrs, data.output);
+                        } else if (data.type === "java") {
+                            this.genJavaFile(data.props, item, table, attrs, data.output);
+                        }
+                    });
                 });
             });
-        });
+        } catch (err) {
+            error(err);
+        }
     }
     genGeneralFile(item, table, attrs, output) {
         let filePath = path.join(output, ejs.render(item.fileDir, attrs));
@@ -204,13 +208,17 @@ class Service {
 
     exportProfile(filePath) {
         return new Promise((resolve, reject) => {
-            let zip = new adm_zip();
-            zip.addLocalFolder(config.dataPath);
-            zip.writeZip(path.join(filePath, "db2code.zip"), err => {
-                if (!err) {
-                    resolve(true);
-                }
-            });
+            try {
+                let zip = new adm_zip();
+                zip.addLocalFolder(config.dataPath);
+                zip.writeZip(path.join(filePath, "db2code.zip"), err => {
+                    if (!err) {
+                        resolve(true);
+                    }
+                });
+            } catch (err) {
+                error(err);
+            }
         });
     }
 
@@ -225,67 +233,80 @@ class Service {
                 error("文件格式不正确！");
                 resolve(false);
             }
-            if (!fs.existsSync(config.tmp)) {
-                fs.mkdirSync(config.tmp);
-            }
-            if (type == 0) {
-                listFileForFolder(config.template).then(res => {
-                    res.forEach(it => {
-                        fs.unlinkSync(path.join(config.template, it));
-                    });
-                });
-            }
-            let tmpPath = path.join(config.tmp, "template");
-            let unzip = new adm_zip(target);
-            unzip.extractAllToAsync(config.tmp, true, err => {
-                if (!err) {
-                    this.copyFile(tmpPath, config.template, 1).then(ret => {
-                        if (ret) {
-                            if (type == 0) {
-                                fs.renameSync(
-                                    path.join(config.tmp, "config.json"),
-                                    path.join(config.dataPath, "config.json"),
-                                    err => {}
-                                );
-                            } else {
-                                let data = loadConfig(config.configFile);
-                                let importData = loadConfig(
-                                    path.join(config.tmp, "config.json")
-                                );
-                                importData.project.forEach(item => {
-                                    if (data.project.findIndex(it => it.id === item.id) < 0) {
-                                        data.project.push(item);
-                                    }
-                                });
-                                importData.datasource.forEach(item => {
-                                    if (data.datasource.findIndex(it => it.id === item.id) < 0) {
-                                        data.datasource.push(item);
-                                    }
-                                });
-                                importData.template.forEach(item => {
-                                    let index = data.template.findIndex(it => it.id === item.id);
-                                    if (index < 0) {
-                                        data.template.push(item);
-                                    } else {
-                                        item.template.forEach(sub => {
-                                            if (data.template[index].template.findIndex(it => it.id === sub.id) < 0) {
-                                                data.template[index].template.push(sub);
-                                            }
-                                        });
-                                    }
-                                });
-                                saveToFile(config.configFile, JSON.stringify(data), false);
-                            }
-                            this.deleteFiles(config.tmp);
-                            resolve(true);
-                        } else {
-                            resolve(false);
-                        }
-                    });
-                } else {
-                    resolve(false);
+            try {
+                if (!fs.existsSync(config.tmp)) {
+                    fs.mkdirSync(config.tmp);
                 }
-            });
+                if (type == 0) {
+                    listFileForFolder(config.template).then(res => {
+                        res.forEach(it => {
+                            fs.unlinkSync(path.join(config.template, it));
+                        });
+                    });
+                }
+                let tmpPath = path.join(config.tmp, "template");
+                let unzip = new adm_zip(target);
+                unzip.extractAllToAsync(config.tmp, true, err => {
+                    if (!err) {
+                        this.copyFile(tmpPath, config.template, 1).then(ret => {
+                            if (ret) {
+                                if (type == 0) {
+                                    fs.renameSync(
+                                        path.join(config.tmp, "config.json"),
+                                        path.join(config.dataPath, "config.json"),
+                                        err => {}
+                                    );
+                                } else {
+                                    let data = loadConfig(config.configFile);
+                                    let importData = loadConfig(
+                                        path.join(config.tmp, "config.json")
+                                    );
+                                    importData.project.forEach(item => {
+                                        if (data.project.findIndex(it => it.id === item.id) < 0) {
+                                            data.project.push(item);
+                                        }
+                                    });
+                                    importData.datasource.forEach(item => {
+                                        if (
+                                            data.datasource.findIndex(it => it.id === item.id) < 0
+                                        ) {
+                                            data.datasource.push(item);
+                                        }
+                                    });
+                                    importData.template.forEach(item => {
+                                        let index = data.template.findIndex(
+                                            it => it.id === item.id
+                                        );
+                                        if (index < 0) {
+                                            data.template.push(item);
+                                        } else {
+                                            item.template.forEach(sub => {
+                                                if (
+                                                    data.template[index].template.findIndex(
+                                                        it => it.id === sub.id
+                                                    ) < 0
+                                                ) {
+                                                    data.template[index].template.push(sub);
+                                                }
+                                            });
+                                        }
+                                    });
+                                    saveToFile(config.configFile, JSON.stringify(data), false);
+                                }
+                                this.deleteFiles(config.tmp);
+                                resolve(true);
+                            } else {
+                                resolve(false);
+                            }
+                        });
+                    } else {
+                        resolve(false);
+                    }
+                });
+            } catch (err) {
+                error(err);
+                resolve(false);
+            }
         });
     }
 
