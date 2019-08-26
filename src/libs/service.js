@@ -136,10 +136,10 @@ class Service {
     }
     genJavaFile(props, item, table, attrs, output) {
         attrs[config.attrs.imports] = [];
-        attrs[config.attrs.packageName] = props.package;
+        attrs[config.attrs.packageName] = ejs.render(props.package, attrs).toLowerCase();
         if (item.package != "") {
             attrs[config.attrs.packageName] =
-                attrs[config.attrs.packageName] + "." + item.package;
+                attrs[config.attrs.packageName] + "." + ejs.render(item.package, attrs).toLowerCase();
         }
         attrs[config.attrs.basePackage] = props.package;
         attrs[config.attrs.swagger] = props.swagger;
