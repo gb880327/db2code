@@ -5,13 +5,6 @@
       <Input v-model="package" placeholder="请输入packageName..." style="width:198px;"></Input>
     </div>
     <div class="row">
-      <span class="labelName">swagger API：</span>
-      <i-switch size="large" v-model="swagger">
-        <span slot="open">开启</span>
-        <span slot="close">关闭</span>
-      </i-switch>
-    </div>
-    <div class="row">
       <div class="templateList" v-for="item,i in template" :key="i">
         <div class="item" style="height:54px;">
           <Row>
@@ -52,7 +45,6 @@ export default {
   data() {
     return {
       package: "",
-      swagger: false,
       template: [
         {
           checked: true,
@@ -93,18 +85,15 @@ export default {
       }
       return {
         package: this.package,
-        swagger: this.swagger,
         template: this.template
       };
     },
     setData(data) {
       this.package = data.package;
-      this.swagger = data.swagger;
       this.template = data.template;
     },
     clear() {
       this.package = "";
-      this.swagger = false;
       this.template = [
         {
           checked: true,

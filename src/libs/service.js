@@ -142,7 +142,6 @@ class Service {
                 attrs[config.attrs.packageName] + "." + ejs.render(item.package, attrs).toLowerCase();
         }
         attrs[config.attrs.basePackage] = props.package;
-        attrs[config.attrs.swagger] = props.swagger;
         if (attrs[config.attrs.fields].findIndex(it => it.type === "Date") >= 0) {
             attrs[config.attrs.imports].push("java.util.Date");
         }

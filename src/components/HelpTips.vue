@@ -6,7 +6,6 @@
         <li>basePackage - 基础包名 ( java )</li>
         <li>packageName - 包名 ( java )</li>
         <li>imports - 需要导入的包 ( java )</li>
-        <li>swagger - 是否启用swagger ( java )</li>
         <li>entityName - 类名</li>
         <li>tableName - 表名</li>
         <li>primaryKey - 主键</li>

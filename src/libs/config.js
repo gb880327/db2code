@@ -24,7 +24,6 @@ let config = {
         basePackage: "basePackage",
         packageName: "packageName",
         imports: "imports",
-        swagger: "swagger",
         entityName: "entityName",
         tableName: "tableName",
         remark: "remark",
