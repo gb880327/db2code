@@ -25,7 +25,6 @@ import project from "@/views/project/index";
 import setting from "@/views/setting/index";
 import template from "@/views/template/index";
 import dataSource from "@/views/datasource/index";
-import mapping from "@/views/mapping/index";
 import VTreeselect from "vue-treeselect";
 
 Vue.component("VTreeselect", VTreeselect);
@@ -33,7 +32,6 @@ Vue.component("dataSource", dataSource);
 Vue.component("project", project);
 Vue.component("setting", setting);
 Vue.component("templateManage", template);
-Vue.component("mapping", mapping);
 
 Vue.config.productionTip = false;
 Vue.use(iView);

@@ -1,5 +1,5 @@
 <template>
-  <div :style="{height: getHeight+'px'}">
+  <Modal v-model="showModal" :width="720" title="修改数据类型映射" :mask-closable="false" >
     <div class="mapping-box">
       <div class="mapping-top">
         <div class="mapping-row" style="padding-left: 100px;font-weight: bold;font-size: 16px;">
@@ -10,7 +10,7 @@
         </div>
       </div>
       <div calss="mapping-data">
-        <Scroll :height="600" class="mapping-scroll">
+        <Scroll ref="scroll" :height="600" class="mapping-scroll">
           <div class="row" v-for="item,i of typeMapping" :key="i">
             <div class="mapping-row">
               <Select v-model="item.dbType" style="width:200px">
@@ -38,9 +38,14 @@
             <Icon type="ios-trash-outline" @click="delMapping(i)" class="mapping-del" />
           </div>
         </Scroll>
+        <div class="mapping-button">
+          <Button type="dashed" @click="addMapping">新增</Button>
+          <Button type="primary" @click="save">保存</Button>
+        </div>
       </div>
     </div>
-  </div>
+    <div slot="footer"></div>
+  </Modal>
 </template>
     
 <script>
@@ -49,10 +54,11 @@ import Service from "@/libs/service";
 import { dataTypeList } from "@/libs/dataTypeMapping";
 
 export default {
+  name: "dataTypeMapping",
   data() {
     return {
+      showModal: false,
       service: new Service(),
-      height: 0,
       dbTypeList: config.dbType,
       langList: config.langType,
       dataTypeList: dataTypeList,
@@ -63,25 +69,23 @@ export default {
   },
   created() {
     this.dbType = this.dbTypeList[0];
-    this.service.getDataTypeMappingForFile().then(ret => {
-      let data = ret[this.dbType + "To" + this.projectLang];
-      Object.keys(data).forEach(key => {
-        this.typeMapping.push({
-          dbType: key,
-          langType: data[key]
+  },
+  computed: {},
+  methods: {
+    show(dbType, projectLang) {
+      this.dbType = dbType;
+      this.projectLang = projectLang;
+      this.service.getDataTypeMappingForFile().then(ret => {
+        let data = ret[this.dbType + "To" + this.projectLang];
+        Object.keys(data).forEach(key => {
+          this.typeMapping.push({
+            dbType: key,
+            langType: data[key]
+          });
         });
       });
-    });
-    this.$nextTick(() => {
-      this.height = this.$parent.$el.clientHeight;
-    });
-  },
-  computed: {
-    getHeight() {
-      return this.height;
-    }
-  },
-  methods: {
+      this.showModal = true;
+    },
     checkDbTypeStatus(value) {
       return this.typeMapping.findIndex(item => item.dbType === value) >= 0;
     },
@@ -90,7 +94,18 @@ export default {
     },
     delMapping(i) {
       this.typeMapping.splice(i, 1);
-    }
+    },
+    addMapping() {
+      this.typeMapping.push({
+        dbType: "",
+        langType: ""
+      });
+      this.$nextTick(() => {
+        let container = this.$el.querySelector(".ivu-scroll-container");
+        container.scrollTop = container.scrollHeight;
+      });
+    },
+    save() {}
   }
 };
 </script>

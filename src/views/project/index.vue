@@ -50,6 +50,10 @@
             &nbsp;&nbsp;
             Tips: <span style="color:red;">general：生成普通文本文件</span>
           </div>
+          <div class="row" v-if="type != '' && type != 'general'">
+            <span class="labelName">数据类型映射：</span>
+            <Button style="width: 200px;" @click="dataMapping">修改</Button>
+          </div>
           <java ref="java" v-if="type==='java'"></java>
           <general ref="general" v-else-if="type === 'general'"></general>
         </Col>
@@ -62,6 +66,7 @@
         </Col>
       </Row>
     </div>
+    <dataTypeMapping ref="mapping"></dataTypeMapping>
     <Modal
       v-model="resultModal"
       title="执行结果"
@@ -83,12 +88,14 @@ import config from "@/libs/config";
 import helpTips from "@/components/HelpTips";
 import pathChoose from "@/components/PathChoose";
 import TableList from "@/components/TableList";
+import dataTypeMapping from "@/views/mapping/index";
 import java from "./type/java";
 import general from "./type/general";
 import Service from "@/libs/service";
 
 export default {
   components: {
+    dataTypeMapping,
     helpTips,
     pathChoose,
     TableList,
@@ -131,6 +138,10 @@ export default {
     }
   },
   methods: {
+    dataMapping(){
+      let db = this.$root.dbList.find(it=> it.id === this.db);
+      this.$refs.mapping.show(db.type, this.type);
+    },
     clear() {
       if (this.type != "" && this.$refs[this.type]) {
         this.$refs[this.type].clear();

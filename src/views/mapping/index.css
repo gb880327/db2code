@@ -1,5 +1,5 @@
 .mapping-box {
-    margin-top: 30px;
+    margin: 15px 0 20px 0;
     width: 700px;
 }
 
@@ -32,4 +32,14 @@
     border-bottom: 1px solid #dcdee2;
     border-left: 1px solid #dcdee2;
     margin-left: 60px;
+}
+
+.mapping-button {
+    margin-left: 60px;
+    padding-bottom: 20px;
+}
+
+.mapping-button button {
+    width: 100%;
+    margin-top: 10px;
 }
