@@ -7,6 +7,7 @@
           <Tabs @on-click="gotoPath" v-model="current">
             <TabPane label="项目" icon="md-cube" name="project"></TabPane>
             <TabPane label="数据源" icon="ios-analytics" name="dataSource"></TabPane>
+            <TabPane label="数据类型映射" icon="ios-repeat" name="mapping"></TabPane>
             <TabPane label="模板" icon="ios-browsers-outline" name="templateManage"></TabPane>
             <TabPane label="系统设置" icon="ios-cog-outline" name="setting"></TabPane>
           </Tabs>

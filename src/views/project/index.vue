@@ -48,7 +48,7 @@
               <Option v-for="item in langList" :value="item" :key="item">{{ item }}</Option>
             </Select>
             &nbsp;&nbsp;
-            Tips: <span style="color:red;">general为通用设置</span>
+            Tips: <span style="color:red;">general：生成普通文本文件</span>
           </div>
           <java ref="java" v-if="type==='java'"></java>
           <general ref="general" v-else-if="type === 'general'"></general>

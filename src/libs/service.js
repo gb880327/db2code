@@ -14,6 +14,7 @@ import {
     loadConfig,
     listFileForFolder
 } from "./util";
+import { typeMapping } from "./dataTypeMapping";
 
 class Service {
     constructor() {
@@ -136,10 +137,14 @@ class Service {
     }
     genJavaFile(props, item, table, attrs, output) {
         attrs[config.attrs.imports] = [];
-        attrs[config.attrs.packageName] = ejs.render(props.package, attrs).toLowerCase();
+        attrs[config.attrs.packageName] = ejs
+            .render(props.package, attrs)
+            .toLowerCase();
         if (item.package != "") {
             attrs[config.attrs.packageName] =
-                attrs[config.attrs.packageName] + "." + ejs.render(item.package, attrs).toLowerCase();
+                attrs[config.attrs.packageName] +
+                "." +
+                ejs.render(item.package, attrs).toLowerCase();
         }
         attrs[config.attrs.basePackage] = props.package;
         if (attrs[config.attrs.fields].findIndex(it => it.type === "Date") >= 0) {
@@ -325,6 +330,28 @@ class Service {
         } else {
             fs.unlinkSync(filePath);
         }
+    }
+
+    getDataTypeMappingForFile() {
+        return new Promise((resolve, reject) => {
+            let filePath = config.dataTypeMapping;
+            if (!fs.existsSync(filePath)) {
+                resolve(typeMapping);
+            } else {
+                readForFile(filePath, false).then(ret => {
+                    resolve(JSON.parse(ret));
+                });
+            }
+        });
+    }
+
+    saveDataTypeMapping(data) {
+        return new Promise((resolve, reject) => {
+            let filePath = config.dataTypeMapping;
+            saveToFile(filepath, JSON.stringify(data), false).then(ret => {
+                resolve(ret);
+            });
+        });
     }
 }
 
