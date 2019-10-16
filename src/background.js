@@ -87,7 +87,7 @@ const template = [{
                 label: "GitHub",
                 click() {
                     require("electron").shell.openExternal(
-                        "https://github.com/gb880327/db2code"
+                        "https://github.rookietao.site"
                     );
                 }
             }
