@@ -74,12 +74,12 @@ export default {
     },
     getData() {
       if (this.package === "") {
-        this.$error("请填写项目包名！");
+        this.$error(this, "请填写项目包名！");
         return;
       }
       for (let item of this.template) {
         if (item.templateId === "" || item.fileName === "") {
-          this.$error("请填写完整的模板信息！");
+          this.$error(this, "请填写完整的模板信息！");
           return;
         }
       }

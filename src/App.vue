@@ -78,14 +78,14 @@ export default {
     if (!fs.existsSync(config.dataPath)) {
       fs.mkdir(config.dataPath, err => {
         if (err) {
-          this.$error(err);
+          this.$error(this, err);
         }
       });
     }
     if (!fs.existsSync(config.template)) {
       fs.mkdir(config.template, err => {
         if (err) {
-          this.$error(err);
+          this.$error(this, err);
         }
       });
     }

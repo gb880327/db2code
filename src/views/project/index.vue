@@ -145,11 +145,11 @@ export default {
     },
     dataMapping() {
       if (this.db === "") {
-        this.$error("请选择数据源！");
+        this.$error(this, "请选择数据源！");
         return;
       }
       if (this.type === "") {
-        this.$error("请选择项目语言！");
+        this.$error(this, "请选择项目语言！");
         return;
       }
       let db = this.$root.dbList.find(it => it.id === this.db);
@@ -215,19 +215,19 @@ export default {
     },
     save() {
       if (this.name === "") {
-        this.$error("请填写项目名称！");
+        this.$error(this, "请填写项目名称！");
         return;
       }
       if (this.db === "") {
-        this.$error("请选择数据源！");
+        this.$error(this, "请选择数据源！");
         return;
       }
       if (this.output === "") {
-        this.$error("请选择输出路径！");
+        this.$error(this, "请选择输出路径！");
         return;
       }
       if (this.type === "") {
-        this.$error("请选择项目语言！");
+        this.$error(this, "请选择项目语言！");
         return;
       }
       let data = this.$refs[this.type].getData();
@@ -250,7 +250,7 @@ export default {
       };
       this.$root.projectList.push(item);
       this.$root.saveConfig();
-      this.$success("保存成功！");
+      this.$success(this, "保存成功！");
       this.clear();
     },
     isSelect(id) {
@@ -277,7 +277,7 @@ export default {
         _this.$root.saveConfig();
         _this.load();
         _this.clear();
-        _this.$success("删除成功！");
+        _this.$success(this, "删除成功！");
       });
     },
     oncopy(id) {
@@ -292,7 +292,7 @@ export default {
         dataTypeMapping: newProject.dataTypeMapping
       });
       _this.$root.saveConfig();
-      this.$success("复制成功！");
+      this.$success(this, "复制成功！");
     }
   }
 };

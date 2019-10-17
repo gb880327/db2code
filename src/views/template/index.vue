@@ -86,15 +86,15 @@ export default {
   methods: {
     save() {
       if (this.group == "") {
-        this.$error("请填选择分类！");
+        this.$error(this,"请填选择分类！");
         return;
       }
       if (this.name === "") {
-        this.$error("请填写模板名称！");
+        this.$error(this,"请填写模板名称！");
         return;
       }
       if (this.aceEditor.getValue() === "") {
-        this.$error("请填写模板内容！");
+        this.$error(this,"请填写模板内容！");
         return;
       }
       let id = this.current.id;
@@ -128,11 +128,11 @@ export default {
               this.$root.templateList[index].template.push(item);
             }
             this.$root.saveConfig();
-            this.$success("保存成功！");
+            this.$success(this,"保存成功！");
             this.onsuccess();
             this.clean();
           } else {
-            this.$error("保存失败！");
+            this.$error(this,"保存失败！");
           }
         });
     },

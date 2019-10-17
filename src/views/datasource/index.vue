@@ -4,7 +4,12 @@
       <div class="add" @click="clear">
         <Icon type="ios-add" size="22" />
       </div>
-      <Row class="item" v-for="item,i of $root.dbList" :key="i" :class="isSelect(item.id) ? 'select' : ''">
+      <Row
+        class="item"
+        v-for="item,i of $root.dbList"
+        :key="i"
+        :class="isSelect(item.id) ? 'select' : ''"
+      >
         <Col span="20" style="padding-left:10px;cursor: pointer;">
           <span @click="edit(item.id)" style="display:inline-block;width:100%;">{{item.name}}</span>
         </Col>
@@ -78,7 +83,7 @@ export default {
         let index = _this.$root.dbList.findIndex(it => it.id === id);
         _this.$root.dbList.splice(index, 1);
         this.$root.saveConfig();
-        _this.$success("删除成功！");
+        _this.$success(this, "删除成功！");
       });
     },
     clear() {
@@ -88,12 +93,12 @@ export default {
     },
     save() {
       if (this.name === "") {
-        this.$error("请填写名称！");
+        this.$error(this, "请填写名称！");
         return;
       }
       let props = this.$refs[this.type].getData();
-      if(!props || props == null){
-        this.$error("数据库配置为空，保存失败！");
+      if (!props || props == null) {
+        this.$error(this, "数据库配置为空，保存失败！");
         return;
       }
       let item = {
@@ -108,11 +113,11 @@ export default {
       }
       this.$root.dbList.push(item);
       this.$root.saveConfig();
-      this.$success("保存成功！");
+      this.$success(this, "保存成功！");
     }
   }
 };
 </script>
 <style scoped>
-@import './index.css';
+@import "./index.css";
 </style>

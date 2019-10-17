@@ -9,6 +9,7 @@
       class="chooseInput"
       :style="{width: width+'px'}"
       @on-change="changeHanlder"
+      :readonly="readonly"
     ></Input>
     <Button class="chooseBtn" type="text" @click="selectPath">选择...</Button>
   </div>
@@ -40,6 +41,10 @@ export default {
       default: "系统配置保存路径"
     },
     file: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
       type: Boolean,
       default: false
     }

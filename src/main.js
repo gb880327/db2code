@@ -39,10 +39,36 @@ Vue.use(iView);
 
 Vue.prototype.$genId = genId;
 Vue.prototype.$path = path;
-Vue.prototype.$success = success;
-Vue.prototype.$error = error;
-Vue.prototype.$warning = warning;
-Vue.prototype.$info = info;
+
+Vue.prototype.$success = (vue, msg, callback = () => {}) => {
+    vue.$Notice.success({
+        title: msg,
+        duration: 3,
+        onClose: callback
+    });
+};
+Vue.prototype.$error = (vue, msg, callback = () => {}) => {
+    vue.$Notice.error({
+        title: msg,
+        duration: 3,
+        onClose: callback
+    });
+};
+Vue.prototype.$warning = (vue, msg, callback = () => {}) => {
+    vue.$Notice.warning({
+        title: msg,
+        duration: 3,
+        onClose: callback
+    });
+};
+Vue.prototype.$info = (vue, msg, callback = () => {}) => {
+    vue.$Notice.info({
+        title: msg,
+        duration: 3,
+        onClose: callback
+    });
+};
+
 Vue.prototype.$confirm = confirm;
 Vue.prototype.$customConfirm = customConfirm;
 Vue.prototype.$saveData = saveData;
@@ -104,15 +130,15 @@ const vue = new Vue({
             } else {
                 if (localStorage.getItem("template")) {
                     this.templateList = JSON.parse(localStorage.getItem("template"));
-                    localStorage.removeItem('template');
+                    localStorage.removeItem("template");
                 }
                 if (localStorage.getItem("datasource")) {
                     this.dbList = JSON.parse(localStorage.getItem("datasource"));
-                    localStorage.removeItem('datasource');
+                    localStorage.removeItem("datasource");
                 }
                 if (localStorage.getItem("project")) {
                     this.projectList = JSON.parse(localStorage.getItem("project"));
-                    localStorage.removeItem('project');
+                    localStorage.removeItem("project");
                 }
                 this.saveConfig();
             }

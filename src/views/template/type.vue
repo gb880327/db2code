@@ -19,8 +19,7 @@ export default {
       id: 0
     };
   },
-  created() {
-  },
+  created() {},
   methods: {
     show(id, name) {
       if (name) {
@@ -31,7 +30,7 @@ export default {
     },
     ok() {
       if (this.groupName == "") {
-        this.$error("请填写分组名称！");
+        this.$error(this, "请填写分组名称！");
         return;
       }
       let templateList = this.$parent.templateList;
@@ -39,13 +38,13 @@ export default {
         !this.id &&
         templateList.findIndex(item => item.name == this.groupName) >= 0
       ) {
-        this.$error("分组已存在！");
+        this.$error(this, "分组已存在！");
         return;
       }
       if (this.id) {
         let index = templateList.findIndex(it => it.id == this.id);
         let item = templateList[index];
-        item['name'] = this.groupName;
+        item["name"] = this.groupName;
         templateList[index] = item;
       } else {
         templateList.push({
@@ -56,9 +55,9 @@ export default {
       }
       this.groupName = "";
       this.$root.saveConfig();
-      this.$success("保存成功！");
+      this.$success(this, "保存成功！");
       this.modal = false;
-      this.$emit('success');
+      this.$emit("success");
     },
     cancel() {
       this.modal = false;

@@ -56,7 +56,7 @@ export default {
         this.$confirm("确认删除该分类？", () => {
           let index = templateList.findIndex(it => it.id == item.id);
           if (templateList[index].template.length > 0) {
-            _this.$error("请先删除该分类下的模板！");
+            _this.$error(this,"请先删除该分类下的模板！");
             return;
           }
           templateList.splice(index, 1);
@@ -77,7 +77,7 @@ export default {
               group.template.splice(index, 1);
               templateList[groupIndex] = group;
               _this.$root.saveConfig();
-              _this.$success("删除成功！");
+              _this.$success(this,"删除成功！");
               _this.load();
               _this.$parent.onsuccess();
             }
