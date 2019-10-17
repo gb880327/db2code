@@ -238,6 +238,9 @@ class Service {
                 resolve(false);
             }
             try {
+                if (!fs.existsSync(config.template)) {
+                    fs.mkdirSync(config.template);
+                }
                 if (!fs.existsSync(config.tmp)) {
                     fs.mkdirSync(config.tmp);
                 }
@@ -325,11 +328,12 @@ class Service {
         }
         if (fs.statSync(filePath).isDirectory()) {
             fs.readdir(filePath, (err, files) => {
-                files.forEach(file => {
-                    this.deleteFiles(path.join(filePath, file));
-                });
                 if (files.length == 0) {
                     fs.rmdirSync(filePath);
+                } else {
+                    files.forEach(file => {
+                        this.deleteFiles(path.join(filePath, file));
+                    });
                 }
             });
         } else {
