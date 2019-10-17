@@ -46,9 +46,9 @@
             <span class="labelName">项目语言：</span>
             <Select v-model="type" style="width:200px">
               <Option v-for="item in langList" :value="item" :key="item">{{ item }}</Option>
-            </Select>
-            &nbsp;&nbsp;
-            Tips: <span style="color:red;">general：生成普通文本文件</span>
+            </Select>&nbsp;&nbsp;
+            Tips:
+            <span style="color:red;">general：生成普通文本文件</span>
           </div>
           <div class="row" v-if="type != '' && type != 'general'">
             <span class="labelName">数据类型映射：</span>
@@ -66,7 +66,7 @@
         </Col>
       </Row>
     </div>
-    <dataTypeMapping ref="mapping"></dataTypeMapping>
+    <dataTypeMapping ref="mapping" v-on:save="onSave"></dataTypeMapping>
     <Modal
       v-model="resultModal"
       title="执行结果"
@@ -92,6 +92,7 @@ import dataTypeMapping from "@/views/mapping/index";
 import java from "./type/java";
 import general from "./type/general";
 import Service from "@/libs/service";
+import { typeMapping } from "@/libs/dataTypeMapping";
 
 export default {
   components: {
@@ -115,7 +116,8 @@ export default {
       name: "",
       db: "",
       output: "",
-      type: ""
+      type: "",
+      dataTypeMapping: null
     };
   },
   created() {
@@ -138,9 +140,20 @@ export default {
     }
   },
   methods: {
-    dataMapping(){
-      let db = this.$root.dbList.find(it=> it.id === this.db);
-      this.$refs.mapping.show(db.type, this.type);
+    onSave(typeMapping) {
+      this.dataTypeMapping = typeMapping;
+    },
+    dataMapping() {
+      if (this.db === "") {
+        this.$error("请选择数据源！");
+        return;
+      }
+      if (this.type === "") {
+        this.$error("请选择项目语言！");
+        return;
+      }
+      let db = this.$root.dbList.find(it => it.id === this.db);
+      this.$refs.mapping.show(db.type, this.type, this.getDataTypeMapping());
     },
     clear() {
       if (this.type != "" && this.$refs[this.type]) {
@@ -167,9 +180,16 @@ export default {
         }
       }
     },
+    getDataTypeMapping() {
+      if (this.dataTypeMapping == null || this.dataTypeMapping == undefined) {
+        let item = this.$root.dbList.find(it => it.id === this.db);
+        this.dataTypeMapping = typeMapping[item.type + "To" + this.type];
+      }
+      return this.dataTypeMapping;
+    },
     exec() {
       let props = this.$refs[this.type].getData();
-      if(!props){
+      if (!props) {
         return;
       }
       let item = this.$root.dbList.find(it => it.id === this.db);
@@ -178,7 +198,8 @@ export default {
         type: this.type,
         db: item.props,
         props: props,
-        tableList: this.tableList
+        tableList: this.tableList,
+        dataTypeMapping: this.getDataTypeMapping()
       };
       this.service.genTemplate(data, (item, isDown) => {
         if (!this.resultModal) {
@@ -210,7 +231,7 @@ export default {
         return;
       }
       let data = this.$refs[this.type].getData();
-      if(!data){
+      if (!data) {
         return;
       }
       let id = this.id === "" ? this.$genId() : this.id;
@@ -224,7 +245,8 @@ export default {
         db: this.db,
         output: this.output,
         type: this.type,
-        props: data
+        props: data,
+        dataTypeMapping: this.getDataTypeMapping()
       };
       this.$root.projectList.push(item);
       this.$root.saveConfig();
@@ -241,6 +263,7 @@ export default {
       this.db = item.db;
       this.output = item.output;
       this.id = id;
+      this.dataTypeMapping = item.dataTypeMapping;
       this.$nextTick(() => {
         this.$refs[this.type].setData(item.props);
         this.dbChange(item.db);
@@ -257,15 +280,16 @@ export default {
         _this.$success("删除成功！");
       });
     },
-    oncopy(id){
-      let newProject = this.$root.projectList.find(it=>it.id === id);
+    oncopy(id) {
+      let newProject = this.$root.projectList.find(it => it.id === id);
       this.$root.projectList.push({
         id: this.$genId(),
-        name: newProject.name + '_copy',
+        name: newProject.name + "_copy",
         db: newProject.db,
         output: newProject.output,
         type: newProject.type,
-        props: newProject.props
+        props: newProject.props,
+        dataTypeMapping: newProject.dataTypeMapping
       });
       _this.$root.saveConfig();
       this.$success("复制成功！");
@@ -274,5 +298,5 @@ export default {
 };
 </script>
 <style scoped>
-@import './index.css';
+@import "./index.css";
 </style>

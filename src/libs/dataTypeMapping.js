@@ -21,32 +21,29 @@ export const typeMapping = {
     }
 };
 export const dataTypeList = {
-    mysql: [
-        "int",
-        "bigint",
-        "smallint",
-        "mediumint",
-        "varchar",
-        "char",
-        "tinytext",
-        "text",
-        "mediumtext",
-        "longtext",
-        "datetime",
-        "date",
-        "time",
-        "timestamp",
-        "tinyint",
-        "decimal",
-        "float",
-        "double"
-    ],
-    java: [
-        "Integer",
-        "Long",
-        "String",
-        "Date",
-        "Boolean",
-        "Double"
-    ]
+    database: {
+        mysql: [
+            "int",
+            "bigint",
+            "smallint",
+            "mediumint",
+            "varchar",
+            "char",
+            "tinytext",
+            "text",
+            "mediumtext",
+            "longtext",
+            "datetime",
+            "date",
+            "time",
+            "timestamp",
+            "tinyint",
+            "decimal",
+            "float",
+            "double"
+        ]
+    },
+    codeLang: {
+        java: ["Integer", "Long", "String", "Date", "Boolean", "Double"]
+    }
 };

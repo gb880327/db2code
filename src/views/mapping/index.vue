@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="showModal" :width="720" title="修改数据类型映射" :mask-closable="false" >
+  <Modal v-model="showModal" :width="720" title="修改数据类型映射" :mask-closable="false">
     <div class="mapping-box">
       <div class="mapping-top">
         <div class="mapping-row" style="padding-left: 100px;font-weight: bold;font-size: 16px;">
@@ -15,7 +15,7 @@
             <div class="mapping-row">
               <Select v-model="item.dbType" style="width:200px">
                 <Option
-                  v-for="item in dataTypeList[dbType]"
+                  v-for="item in $root.dataBaseType[dbType]"
                   :value="item"
                   :key="item"
                   :disabled="checkDbTypeStatus(item)"
@@ -28,10 +28,9 @@
             <div class="mapping-row" style="padding-left: 50px;">
               <Select v-model="item.langType" style="width:200px">
                 <Option
-                  v-for="item in dataTypeList[projectLang]"
+                  v-for="item in $root.codeLangType[projectLang]"
                   :value="item"
                   :key="item"
-                  :disabled="checkLangTypeStatus(item)"
                 >{{ item }}</Option>
               </Select>
             </div>
@@ -59,8 +58,6 @@ export default {
     return {
       showModal: false,
       service: new Service(),
-      dbTypeList: config.dbType,
-      langList: config.langType,
       dataTypeList: dataTypeList,
       typeMapping: [],
       dbType: "",
@@ -68,29 +65,24 @@ export default {
     };
   },
   created() {
-    this.dbType = this.dbTypeList[0];
+    this.dbType = this.$root.dataBaseType[0];
   },
   computed: {},
   methods: {
-    show(dbType, projectLang) {
+    show(dbType, projectLang, mappingData) {
       this.dbType = dbType;
       this.projectLang = projectLang;
-      this.service.getDataTypeMappingForFile().then(ret => {
-        let data = ret[this.dbType + "To" + this.projectLang];
-        Object.keys(data).forEach(key => {
-          this.typeMapping.push({
-            dbType: key,
-            langType: data[key]
-          });
+      this.typeMapping = [];
+      Object.keys(mappingData).forEach(key => {
+        this.typeMapping.push({
+          dbType: key,
+          langType: mappingData[key]
         });
       });
       this.showModal = true;
     },
     checkDbTypeStatus(value) {
       return this.typeMapping.findIndex(item => item.dbType === value) >= 0;
-    },
-    checkLangTypeStatus(value) {
-      return this.typeMapping.findIndex(item => item.langType === value) >= 0;
     },
     delMapping(i) {
       this.typeMapping.splice(i, 1);
@@ -105,7 +97,14 @@ export default {
         container.scrollTop = container.scrollHeight;
       });
     },
-    save() {}
+    save() {
+      let data = {};
+      for (let item of this.typeMapping) {
+        data[item.dbType] = item.langType;
+      }
+      this.$emit("save", data);
+      this.showModal = false;
+    }
   }
 };
 </script>

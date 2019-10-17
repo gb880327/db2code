@@ -15,7 +15,7 @@ let config = {
         project: "project"
     },
     dataPath: getBasePath(),
-    dataTypeMapping: path.join(getBasePath(), 'dataTypeMapping.json'),
+    dataType: path.join(getBasePath(), 'dataType.json'),
     configFile: path.join(getBasePath(), 'config.json'),
     template: path.join(getBasePath(), 'template'),
     tmp: path.join(getBasePath(), "tmp"),

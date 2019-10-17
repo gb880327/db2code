@@ -107,7 +107,7 @@ class Service {
     genTemplate(data, callback) {
         try {
             this.callback = callback;
-            this.dbUtil = new DataBaseUtil(data.db);
+            this.dbUtil = new DataBaseUtil(data.db, data.dataTypeMapping);
 
             let templates = data.props.template;
             this.count = 0;
@@ -297,6 +297,11 @@ class Service {
                                     });
                                     saveToFile(config.configFile, JSON.stringify(data), false);
                                 }
+                                fs.renameSync(
+                                    path.join(config.tmp, "dataType.json"),
+                                    path.join(config.dataPath, "dataType.json"),
+                                    err => {}
+                                );
                                 this.deleteFiles(config.tmp);
                                 resolve(true);
                             } else {

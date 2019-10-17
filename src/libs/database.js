@@ -5,28 +5,7 @@ import $this from "@/main.js";
  * 数据库相关操作工具类
  */
 class DataBaseUtil {
-    javaDataType = {
-        int: "Integer",
-        bigint: "Long",
-        smallint: "Integer",
-        mediumint: "Integer",
-        varchar: "String",
-        char: "String",
-        tinytext: "String",
-        text: "String",
-        mediumtext: "String",
-        longtext: "String",
-        datetime: "Date",
-        date: "Date",
-        time: "Date",
-        timestamp: "Long",
-        tinyint: "Boolean",
-        decimal: "Double",
-        float: "Double",
-        double: "Double"
-    };
-
-    constructor(props = {}) {
+    constructor(props = {}, dataTypeMapping = {}) {
         this.isUpper = false;
         this.props = props;
         this.conn = mysql.createConnection({
@@ -37,6 +16,7 @@ class DataBaseUtil {
             password: props.passWord,
             connectTimeout: 1000 * 5
         });
+        this.dataTypeMapping = dataTypeMapping;
         this.conn.connect(err => {
             if (err) {
                 console.log(err);
@@ -108,7 +88,7 @@ class DataBaseUtil {
                         data.push({
                             columnName: item.column_name,
                             fieldName: this.formatFieldName(item.column_name),
-                            type: this.javaDataType[item.data_type],
+                            type: this.dataTypeMapping[item.data_type],
                             comment: item.column_comment,
                             pri: item.column_key === "PRI"
                         });

@@ -19,6 +19,7 @@ import {
     exists,
     loadConfig
 } from "@/libs/util";
+import { dataTypeList } from "@/libs/dataTypeMapping";
 const path = require("path");
 import config from "@/libs/config";
 import project from "@/views/project/index";
@@ -61,7 +62,9 @@ const vue = new Vue({
         return {
             projectList: [],
             templateList: [],
-            dbList: []
+            dbList: [],
+            dataBaseType: {},
+            codeLangType: {}
         };
     },
     created() {
@@ -112,6 +115,15 @@ const vue = new Vue({
                     localStorage.removeItem('project');
                 }
                 this.saveConfig();
+            }
+            if (!exists(config.dataType)) {
+                saveToFile(config.dataType, JSON.stringify(dataTypeList), false);
+                this.dataBaseType = dataTypeList.database;
+                this.codeLangType = dataTypeList.codeLang;
+            } else {
+                let data = loadConfig(config.dataType);
+                this.dataBaseType = data.database;
+                this.codeLangType = data.codeLang;
             }
         },
         saveConfig() {
