@@ -20,7 +20,7 @@ class DataBaseUtil {
         this.conn.connect(err => {
             if (err) {
                 console.log(err);
-                $this.$error(err);
+                $this.$error($this, err);
             }
         });
     }
@@ -33,7 +33,7 @@ class DataBaseUtil {
             );
             this.conn.query(sql, (error, result, fields) => {
                 if (error) {
-                    $this.$error(error);
+                    $this.$error($this, error);
                     reject("查询失败！");
                 } else {
                     resolve(this.formatTableName(result)[0]);
@@ -51,7 +51,7 @@ class DataBaseUtil {
             this.conn.query(sql, (error, result, fields) => {
                 if (error) {
                     console.log(error);
-                    $this.$error(error);
+                    $this.$error($this, error);
                     reject("查询失败！");
                 } else {
                     let tableList = this.formatTableName(result);
@@ -62,7 +62,7 @@ class DataBaseUtil {
                     this.conn.query(sql, (error, result, fields) => {
                         if (error) {
                             console.log(error);
-                            $this.$error(error);
+                            $this.$error($this, error);
                             reject("查询失败！");
                         } else {
                             resolve(tableList.concat(this.formatTableName(result)));
@@ -80,7 +80,7 @@ class DataBaseUtil {
             );
             this.conn.query(sql, (error, result, fields) => {
                 if (error) {
-                    $this.$error(error);
+                    $this.$error($this, error);
                     reject("查询失败！");
                 } else {
                     let data = [];
