@@ -61,8 +61,7 @@ export default {
       aceEditor: null,
       themePath: "ace/theme/monokai",
       modePath: "ace/mode/java",
-      height: 0,
-      templateList: []
+      height: 0
     };
   },
   created() {

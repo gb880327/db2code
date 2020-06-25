@@ -33,7 +33,7 @@ export default {
         this.$error(this, "请填写分组名称！");
         return;
       }
-      let templateList = this.$parent.templateList;
+      let templateList = this.$root.templateList;
       if (
         !this.id &&
         templateList.findIndex(item => item.name == this.groupName) >= 0
